@@ -304,22 +304,24 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             print('{} has been loaded!'.format(file))
             my_path = getDirectory(file) #Set the working path
             file_path = getDirectory(file, '/') #Set the parent path
+            file_name = getFileName(file) #Read file name as its title
             if not os.path.exists(my_path):
                 os.makedirs(my_path)
             s = readImage(file) 
-            title = s.metadata.General.title
+            title = file_name
             scale = s.axes_manager[0].scale #Read scale data from the image
             units = s.axes_manager[0].units #Read units
             s.save(my_path + 'Original image.hspy', overwrite=True) #Save a backup file in hspy format
             image = s.data
+            s.data = norm_img(s.data)
             
             if ABF == 1:
-                s.data = np.divide(1, s.data) #Inverse the ABF contrast to make a ADF-like image
+                s.data = abf2haadf(s.data) #Inverse the ABF contrast to make a ADF-like image
         # Draw an image
             global f_original_img
             f_original_img = PlotCanvas()
             f_original_img.setWindowTitle(file)
-            f_original_img.axes.imshow(image)
+            f_original_img.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
             f_original_img.axes.set_axis_off()
             f_original_img.axes.set_title('{} \n has been successfully loaded!'.format(title))
             f_original_img.show()
@@ -337,7 +339,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             A_positions = A_positions_ini.tolist()
             f_ini = PlotCanvas()
             f_ini.setWindowTitle('Initial atom positions for refining')
-            f_ini.axes.imshow(s.data)
+            f_ini.axes.imshow(s.data,cmap='gray')
             f_ini.axes.set_axis_off()
             f_ini.axes.set_title('Left click to add or remove atoms')
             f_ini.show()
@@ -403,7 +405,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 if s_factor < 1:
                     continue
                 ini_position = get_atom_positions(s, separation=s_factor)
-                f_sep.axes[i].imshow(s.data)
+                f_sep.axes[i].imshow(s.data,cmap='gray')
                 f_sep.axes[i].scatter(np.asarray(ini_position)[:,0], np.asarray(ini_position)[:,1], s=5, color='r')
                 f_sep.axes[i].set_title('Separation = {}'.format(s_factor))
             f_sep.show()
@@ -514,7 +516,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 #Plot A-site atom positions with the original image overlayed.
                 f_A_site = PlotCanvas()
                 f_A_site.setWindowTitle('VecMap0.1: Refined positions of A-site atoms')
-                f_A_site.axes.imshow(image)
+                f_A_site.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
                 f_A_site.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
                 f_A_site.axes.set_axis_off()
                 f_A_site.show()
@@ -523,7 +525,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 #Plot B-site atom positions with the original image overlayed.
                 f_B_site = PlotCanvas()
                 f_B_site.setWindowTitle('VecMap0.1: Refined positions of B-site atoms')
-                f_B_site.axes.imshow(image)
+                f_B_site.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
                 f_B_site.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
                 f_B_site.axes.set_axis_off()
                 f_B_site.show()
@@ -532,7 +534,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 #Plot both A-site and B-site on the image
                 f_AB = PlotCanvas()
                 f_AB.setWindowTitle('VecMap0.1: A-site atoms vs. B-site atoms')
-                f_AB.axes.imshow(image)
+                f_AB.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
                 f_AB.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
                 f_AB.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
                 f_AB.axes.set_axis_off()
@@ -544,7 +546,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     global f_O_site, f_all
                     f_O_site = PlotCanvas()
                     f_O_site.setWindowTitle('VecMap0.1: Refined positions of O atoms')
-                    f_O_site.axes.imshow(image)
+                    f_O_site.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
                     f_O_site.axes.scatter(ap_O[:,0], ap_O[:,1], s=2, color='g')
                     f_O_site.axes.set_axis_off()
                     f_O_site.show()
@@ -553,7 +555,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     #Plot all the atoms on the image
                     f_all = PlotCanvas()
                     f_all.setWindowTitle('VecMap0.1: A-site vs. B-site vs. O atoms')
-                    f_all.axes.imshow(image)
+                    f_all.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
                     f_all.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
                     f_all.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
                     f_all.axes.scatter(ap_O[:,0], ap_O[:,1], s=2, color='g')
@@ -604,7 +606,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             print('====Calculate {} in relative to {}===='.format(disp_atom, rel_atom))
     
             ideal_pos, neighbor_pos = find_ideal_pos(ap_0, ap_1, U_avg, scale)
-            disp = find_displacement(ap_0, ideal_pos, scale)
+            disp = find_displacement(ap_0, ideal_pos, U_avg, scale)
     
             #Save the displacement data
             with open(my_path + title + '-{}-disp.csv'.format(disp_atom),'w') as disp_data:
@@ -625,7 +627,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             if O_map == 1:
                 ap_2 = ap_O.tolist()
                 ideal_O_pos = find_ideal_O_pos(ap_0, ap_1, U_avg, scale)
-                disp_O = find_displacement(ap_2, ideal_O_pos, scale)
+                disp_O = find_displacement(ap_2, ideal_O_pos, U_avg, scale)
         
                 with open(my_path + title + '-disp_O_by_{}.csv'.format(disp_atom),'w') as disp_data:
                     disp_data.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg)\n')
@@ -683,7 +685,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             global f_vec_map
             f_vec_map = PlotCanvas()
             f_vec_map.setWindowTitle('VecMap0.1: Vector Map')
-            f_vec_map.axes.imshow(image)
+            f_vec_map.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
             f_vec_map.axes.set_axis_off()
             for vec in disp_color:
                 f_vec_map.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=1, head_width=a_len/3, head_length=a_len/3)
@@ -726,7 +728,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             global f_vec_map_O
             f_vec_map_O = PlotCanvas()
             f_vec_map_O.setWindowTitle('VecMap0.1: Vector Map of Oxygen atoms')
-            f_vec_map_O.axes.imshow(image)
+            f_vec_map_O.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
             f_vec_map_O.axes.set_axis_off()
             for vec in disp_O:
                 f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color='red',linewidth=1,head_width=O_len/3,head_length=O_len/3)
@@ -968,6 +970,24 @@ def getDirectory(file, s='.'):
         if file[idx] == s: #find the file extension and remove it. '/' for parent path
             path = file[:idx] + '/'
             return path
+        
+def getFileName(file):
+    full_name = getDirectory(file)
+    full_path = getDirectory(file, s='/')
+    f_name = full_name[len(full_path):-1]
+    return f_name
+
+def norm_img(img):
+    #Normalize an image from 0 to 1
+    img_norm = (img - img.min())/(img.max()-img.min())
+    return img_norm
+
+
+def abf2haadf(img):
+    #Invert the contrast for BF/ABF images. img is a 2d array.
+    img1 = -1 * img
+    img_invert = norm_img(img1)
+    return img_invert
 
 def find_atom(img, ini_pos, atom_name, atom_color='r'):
     #Refine atom positions for a sublattice
@@ -1066,14 +1086,14 @@ def find_ideal_O_pos(A, B, Ua, scale):
     ideal_O_positions = list(dict.fromkeys(ideal_O_positions))
     return ideal_O_positions
             
-def find_displacement(A, A_com, scale):
+def find_displacement(A, A_com, Ua, scale):
     #find atomic displacement of A
     #A_com, A are lists of atom coordinates; Ua is the estimated lattice paramter in nm; scale is the image pixel size
     disp = []
     for atom in A_com:
         arrow_end = closest_node(atom,A)[1] 
         vec_len = distance.euclidean(arrow_end,atom)
-        if vec_len > 0.14 / scale:
+        if vec_len > 0.14 * Ua / scale:
             continue
         dx = arrow_end[0]-atom[0]
         dy = arrow_end[1]-atom[1]

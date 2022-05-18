@@ -49,11 +49,9 @@ In the Windows system, you can create a bat file with the following content:
 
 ```
 @echo off
-
 CALL  C:\ProgramData\Anaconda3\Scripts\activate.bat C:\ProgramData\Anaconda3\envs\vecmap
 vec-map
-
 echo on 
 ```
 
-Save this bat, e.g., on your desktop and double-click it to run the app.
+Replace the path and environment name if they are different in your system. Save this bat, e.g., on your desktop and double-click it to run the app.

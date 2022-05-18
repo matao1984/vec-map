@@ -6,11 +6,11 @@ The tool requires Python 3 environment. I recommend to install Anaconda which is
 
 After the Anaconda is installed, open the Anaconda prompt console. Run the following commands:
 
-# 1. Create a virtual environment for the VecMap with python version = 3.8
+### 1. Create a virtual environment for the VecMap with python version = 3.8
 ``conda create -n vecmap python=3.8``
-# 2. Activate the virtual environment
+### 2. Activate the virtual environment
 ``conda activate vecmap``
-# 3. Install git 
+### 3. Install git 
 Navigate to a desired loaction on your hard disk (e.g., C:/Users/xxx/Documents) and download the installation files from the github. Replace the "xxx" with your actual user name.
 ``cd c:/Users/xxx/Documents``
 ``git clone "https://github.com/matao1984/vec-map" vecmap``

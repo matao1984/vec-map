@@ -52,7 +52,7 @@ In the Windows system, you can create a bat file with the following content:
 ```
 @echo off
 CALL  C:\ProgramData\Anaconda3\Scripts\activate.bat C:\ProgramData\Anaconda3\envs\vecmap
-vec-map
+vecmap
 echo on 
 ```
 

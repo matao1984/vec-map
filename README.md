@@ -4,7 +4,37 @@ VecMap is a convenient and lightweight tool to calculate the atomic displacement
 ## 1. Installation
 The tool requires Python 3 environment. I recommend to install Anaconda which is the most straightforward way. Download and install the Python 3 version of Anaconda from here: https://www.anaconda.com/.
 
-After the Anaconda is installed, open the Anaconda prompt console. Simply navigate to the VecMap\ folder with ``cd [PATH]\VecMap`` and run ``pip install -e ./``. The pip should take care of the dependencies and install the package automatically. In case errors happen, most likely they are related to ``hyperSpy`` or ``atomap`` packages which are the main dependencies. It is worth trying in the Anaconda console to install them first: ``pip install hyperspy atomap``.
+After the Anaconda is installed, open the Anaconda prompt console. Run the following commands:
+
+# 1. Create a virtual environment for the VecMap with python version = 3.8
+``conda create -n vecmap python=3.8``
+# 2. Activate the virtual environment
+``conda activate vecmap``
+# 3. Install git 
+Navigate to a desired loaction on your hard disk (e.g., C:/Users/xxx/Documents) and download the installation files from the github. Replace the "xxx" with your actual user name.
+``cd c:/Users/xxx/Documents``
+``git clone "https://github.com/matao1984/vec-map" vecmap``
+In case you don't have git installed, run the following script:
+``conda install git -c anaconda``
+If git raises an error about an existing "vecmap" folder, delete it and retry.
+Then navigate to the folder that was just downloaded, and run the setup script:
+``cd c:/Users/xxx/Documents/vecmap``
+``pip install -e ./``
+If other errors happen in the installation, most likely they are related to ``hyperSpy`` or ``atomap`` packages which are the main dependencies. It is worth trying in the Anaconda console to install them first: ``pip install hyperspy atomap``.
 
 ## 2. Usage
-Simply type "vecmap" in the Anaconda prompt console. A GUI will pop up.
+To run the app from anaconda cmd window:
+``conda activate vecmap``
+``vecmap``
+A GUI will pop up.
+
+In the Windows system, you can create a bat file with the following content:
+``
+@echo off
+
+CALL  C:\ProgramData\Anaconda3\Scripts\activate.bat C:\ProgramData\Anaconda3\envs\vecmap
+vec-map
+
+echo on 
+``
+Save this bat, e.g., on your desktop and double-click it to run the app.

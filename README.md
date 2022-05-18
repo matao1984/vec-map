@@ -56,4 +56,4 @@ vec-map
 echo on 
 ```
 
-Replace the path and environment name if they are different in your system. Save this bat, e.g., on your desktop and double-click it to run the app.
+Replace the path and environment name if they are different in your system. Save this bat, e.g., "VecMap App.bat", on your desktop and double-click it to run the app. Note that this bat file should NOT be named just "vecmap.bat" otherwise it will go into an infinite loop!

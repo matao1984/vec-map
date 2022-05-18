@@ -1489,7 +1489,7 @@ def main():
     print('='*50)
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QIcon("./icon.png"))
+#    app.setWindowIcon(QIcon("./icon.png"))
     VecMap = QtWidgets.QWidget()
     ui = Ui_VecMap()
     ui.setupUi(VecMap)

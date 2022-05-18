@@ -12,25 +12,31 @@ After the Anaconda is installed, open the Anaconda prompt console. Run the follo
 ``conda activate vecmap``
 ### 1.3 Install git 
 Navigate to a desired loaction on your hard disk (e.g., C:/Users/xxx/Documents) and download the installation files from the github. Replace the "xxx" with your actual user name.
-
 ``cd c:/Users/xxx/Documents``
-
 ``git clone "https://github.com/matao1984/vec-map" vecmap``
+
 In case you don't have git installed, run the following script:
+
 ``conda install git -c anaconda``
+
 If git raises an error about an existing "vecmap" folder, delete it and retry.
 Then navigate to the folder that was just downloaded, and run the setup script:
+
 ``cd c:/Users/xxx/Documents/vecmap``
 ``pip install -e ./``
+
 If other errors happen in the installation, most likely they are related to ``hyperSpy`` or ``atomap`` packages which are the main dependencies. It is worth trying in the Anaconda console to install them first: ``pip install hyperspy atomap``.
 
 ## 2. Usage
 To run the app from anaconda cmd window:
+
 ``conda activate vecmap``
 ``vecmap``
+
 A GUI will pop up.
 
 In the Windows system, you can create a bat file with the following content:
+
 ``
 @echo off
 
@@ -39,4 +45,5 @@ vec-map
 
 echo on 
 ``
+
 Save this bat, e.g., on your desktop and double-click it to run the app.

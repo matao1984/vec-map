@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
 Change History
-04/14/2022 VecMap0.2
+05/18/2022 VecMap0.2
 [001] and [011] radio selection
 ABF couple with HAADF function to calculate O map
 Algorithm to calculate O map on [011] direction
@@ -12,6 +12,7 @@ Minor bug fix
 The first versio of VecMap
 '''
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import matplotlib
@@ -1488,6 +1489,7 @@ def main():
     print('='*50)
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QIcon("./icon.png"))
     VecMap = QtWidgets.QWidget()
     ui = Ui_VecMap()
     ui.setupUi(VecMap)

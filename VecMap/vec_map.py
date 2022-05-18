@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
-
-#VecMap0.1
-#The first versio of VecMap
-
+'''
+Change History
+04/14/2022 VecMap0.2
+[001] and [011] radio selection
+ABF couple with HAADF function to calculate O map
+Algorithm to calculate O map on [011] direction
+Bug fixes
+06/13/2020 VecMap0.11
+Minor bug fix
+06/10/2020 VecMap0.1
+The first versio of VecMap
+'''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -11,6 +19,9 @@ matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+
+ver = 'VecMap 0.2'
+r_date = '05/18/2022'
 
 class Ui_VecMap(QtWidgets.QMainWindow):
     def __init__(self):
@@ -26,21 +37,31 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         VecMap.setMinimumSize(QtCore.QSize(402, 836))
         VecMap.setMaximumSize(QtCore.QSize(1024, 1024))
         self.pushButton = QtWidgets.QPushButton(VecMap)
-        self.pushButton.setGeometry(QtCore.QRect(20, 40, 91, 41))
+        self.pushButton.setGeometry(QtCore.QRect(20, 40, 95, 41))
         self.pushButton.setObjectName("pushButton")
+        self.radioButton_3 = QtWidgets.QRadioButton(VecMap)
+        self.radioButton_3.setGeometry(QtCore.QRect(130, 10, 95, 20))
+        self.radioButton_3.setChecked(True)
+        self.radioButton_3.setObjectName("radioButton_3")
+        self.radioButton_4 = QtWidgets.QRadioButton(VecMap)
+        self.radioButton_4.setGeometry(QtCore.QRect(200, 10, 95, 20))
+        self.radioButton_4.setObjectName("radioButton_4")
+        self.load_group = QtWidgets.QButtonGroup(VecMap)
+        self.load_group.addButton(self.radioButton_3)
+        self.load_group.addButton(self.radioButton_4)
         self.checkBox = QtWidgets.QCheckBox(VecMap)
-        self.checkBox.setGeometry(QtCore.QRect(150, 10, 111, 20))
+        self.checkBox.setGeometry(QtCore.QRect(130, 35, 111, 20))
         self.checkBox.setObjectName("checkBox")
         self.line = QtWidgets.QFrame(VecMap)
-        self.line.setGeometry(QtCore.QRect(20, 90, 371, 21))
+        self.line.setGeometry(QtCore.QRect(20, 95, 371, 21))
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.label = QtWidgets.QLabel(VecMap)
-        self.label.setGeometry(QtCore.QRect(20, 10, 121, 16))
+        self.label.setGeometry(QtCore.QRect(20, 10, 100, 16))
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(VecMap)
-        self.label_2.setGeometry(QtCore.QRect(130, 40, 251, 51))
+        self.label_2.setGeometry(QtCore.QRect(130, 55, 251, 51))
         self.label_2.setTextFormat(QtCore.Qt.AutoText)
         self.label_2.setScaledContents(False)
         self.label_2.setWordWrap(True)
@@ -55,10 +76,10 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.label_4.setGeometry(QtCore.QRect(20, 130, 111, 16))
         self.label_4.setObjectName("label_4")
         self.pushButton_2 = QtWidgets.QPushButton(VecMap)
-        self.pushButton_2.setGeometry(QtCore.QRect(20, 170, 91, 41))
+        self.pushButton_2.setGeometry(QtCore.QRect(20, 170, 95, 41))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_3 = QtWidgets.QPushButton(VecMap)
-        self.pushButton_3.setGeometry(QtCore.QRect(20, 230, 91, 41))
+        self.pushButton_3.setGeometry(QtCore.QRect(20, 230, 95, 41))
         self.pushButton_3.setObjectName("pushButton_3")
         self.label_5 = QtWidgets.QLabel(VecMap)
         self.label_5.setGeometry(QtCore.QRect(130, 160, 251, 51))
@@ -84,10 +105,10 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.checkBox_2.setGeometry(QtCore.QRect(20, 330, 111, 20))
         self.checkBox_2.setObjectName("checkBox_2")
         self.checkBox_3 = QtWidgets.QCheckBox(VecMap)
-        self.checkBox_3.setGeometry(QtCore.QRect(150, 330, 131, 20))
+        self.checkBox_3.setGeometry(QtCore.QRect(130, 330, 131, 20))
         self.checkBox_3.setObjectName("checkBox_3")
         self.pushButton_4 = QtWidgets.QPushButton(VecMap)
-        self.pushButton_4.setGeometry(QtCore.QRect(20, 370, 91, 41))
+        self.pushButton_4.setGeometry(QtCore.QRect(20, 370, 95, 41))
         self.pushButton_4.setObjectName("pushButton_4")
         self.label_10 = QtWidgets.QLabel(VecMap)
         self.label_10.setGeometry(QtCore.QRect(130, 360, 251, 51))
@@ -96,7 +117,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.label_10.setWordWrap(True)
         self.label_10.setObjectName("label_10")
         self.checkBox_4 = QtWidgets.QCheckBox(VecMap)
-        self.checkBox_4.setGeometry(QtCore.QRect(260, 10, 111, 20))
+        self.checkBox_4.setGeometry(QtCore.QRect(230, 35, 141, 20))
         self.checkBox_4.setObjectName("checkBox_4")
         self.line_3 = QtWidgets.QFrame(VecMap)
         self.line_3.setGeometry(QtCore.QRect(20, 420, 371, 21))
@@ -107,7 +128,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.label_11.setGeometry(QtCore.QRect(20, 440, 191, 16))
         self.label_11.setObjectName("label_11")
         self.label_12 = QtWidgets.QLabel(VecMap)
-        self.label_12.setGeometry(QtCore.QRect(170, 130, 191, 16))
+        self.label_12.setGeometry(QtCore.QRect(170, 130, 191, 32))
         self.label_12.setObjectName("label_12")
         self.label_14 = QtWidgets.QLabel(VecMap)
         self.label_14.setGeometry(QtCore.QRect(20, 510, 381, 16))
@@ -140,7 +161,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.label_18.setWordWrap(True)
         self.label_18.setObjectName("label_18")
         self.pushButton_7 = QtWidgets.QPushButton(VecMap)
-        self.pushButton_7.setGeometry(QtCore.QRect(290, 460, 91, 51))
+        self.pushButton_7.setGeometry(QtCore.QRect(290, 460, 95, 51))
         self.pushButton_7.setObjectName("pushButton_7")
         self.line_4 = QtWidgets.QFrame(VecMap)
         self.line_4.setGeometry(QtCore.QRect(20, 730, 371, 21))
@@ -151,7 +172,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.pushButton_8.setGeometry(QtCore.QRect(20, 780, 120, 28))
         self.pushButton_8.setObjectName("pushButton_8")
         self.label_19 = QtWidgets.QLabel(VecMap)
-        self.label_19.setGeometry(QtCore.QRect(60, 850, 291, 16))
+        self.label_19.setGeometry(QtCore.QRect(60, 850, 300, 16))
         self.label_19.setObjectName("label_19")
         self.label_20 = QtWidgets.QLabel(VecMap)
         self.label_20.setGeometry(QtCore.QRect(20, 750, 211, 16))
@@ -179,11 +200,14 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.radioButton_2 = QtWidgets.QRadioButton(VecMap)
         self.radioButton_2.setGeometry(QtCore.QRect(90, 480, 95, 20))
         self.radioButton_2.setObjectName("radioButton_2")
+        self.cal_group = QtWidgets.QButtonGroup(VecMap)
+        self.cal_group.addButton(self.radioButton)
+        self.cal_group.addButton(self.radioButton_2)
         self.label_21 = QtWidgets.QLabel(VecMap)
         self.label_21.setGeometry(QtCore.QRect(20, 460, 171, 16))
         self.label_21.setObjectName("label_21")
         self.pushButton_13 = QtWidgets.QPushButton(VecMap)
-        self.pushButton_13.setGeometry(QtCore.QRect(200, 460, 81, 51))
+        self.pushButton_13.setGeometry(QtCore.QRect(200, 460, 85, 51))
         self.pushButton_13.setObjectName("pushButton_13")
         self.label_7 = QtWidgets.QLabel(VecMap)
         self.label_7.setGeometry(QtCore.QRect(20, 650, 41, 16))
@@ -201,9 +225,16 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.label_13.setGeometry(QtCore.QRect(110, 650, 41, 16))
         self.label_13.setObjectName("label_13")
         self.checkBox_5 = QtWidgets.QCheckBox(VecMap)
-        self.checkBox_5.setGeometry(QtCore.QRect(210, 650, 111, 20))
+        self.checkBox_5.setGeometry(QtCore.QRect(200, 650, 111, 20))
         self.checkBox_5.setChecked(True)
         self.checkBox_5.setObjectName("checkBox_5")
+        self.checkBox_6 = QtWidgets.QCheckBox(VecMap)
+        self.checkBox_6.setGeometry(QtCore.QRect(280, 650, 111, 20))
+        self.checkBox_6.setChecked(True)
+        self.checkBox_6.setObjectName("checkBox_6")
+        self.checkBox_4.setEnabled(False)
+        self.checkBox.toggled.connect(self.checkBox_4.setEnabled)
+        self.checkBox.toggled.connect(lambda checked: not checked and self.checkBox_4.setChecked(False))
 
         self.retranslateUi(VecMap)
         QtCore.QMetaObject.connectSlotsByName(VecMap)
@@ -228,10 +259,10 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 
     def retranslateUi(self, VecMap):
         _translate = QtCore.QCoreApplication.translate
-        VecMap.setWindowTitle(_translate("VecMap", "VecMap0.1"))
+        VecMap.setWindowTitle(_translate("VecMap", ver))
         #VecMap.setWindowIcon(QtGui.QIcon('icon.png'))
         self.pushButton.setText(_translate("VecMap", "Load Image"))
-        self.checkBox.setText(_translate("VecMap", "ABF/BF image"))
+        self.checkBox.setText(_translate("VecMap", "ABF image"))
         self.label.setText(_translate("VecMap", "Step 1. Load image"))
         self.label_2.setText(_translate("VecMap", "<html><head/><body><p>Load a HR-STEM image with a perovskite structure. Support [001] and [011] zone axes. Filtered image is preferred.</p><p><br/></p></body></html>"))
         self.lineEdit.setText(_translate("VecMap", "8"))
@@ -247,9 +278,9 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.checkBox_3.setText(_translate("VecMap", "Save result plots"))
         self.pushButton_4.setText(_translate("VecMap", "Refine"))
         self.label_10.setText(_translate("VecMap", "<html><head/><body><p>Refine atom positions. Check [001] or [011] zone. Only check Refine Oxygen if O columns are visible.</p></body></html>"))
-        self.checkBox_4.setText(_translate("VecMap", "[011] Zone"))
+        self.checkBox_4.setText(_translate("VecMap", "Couple with HAADF"))
         self.label_11.setText(_translate("VecMap", "Step 4. Generate a vector map"))
-        self.label_12.setText(_translate("VecMap", "e.g., something around 8-12"))
+        self.label_12.setText(_translate("VecMap", "A positive integer used to separate the \nA-site and B-site atoms."))
         self.label_14.setText(_translate("VecMap", "List of angles (degrees) of vectors that will be colored differently:"))
         self.lineEdit_4.setText(_translate("VecMap", "45"))
         self.label_15.setText(_translate("VecMap", "e.g., 45 135 225 315"))
@@ -258,47 +289,57 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.lineEdit_5.setText(_translate("VecMap", "yellow"))
         self.pushButton_5.setText(_translate("VecMap", "Vector angle\n"
 "distrubution"))
-        self.pushButton_6.setText(_translate("VecMap", "Show \n"
+        self.pushButton_6.setText(_translate("VecMap", "Cation \n"
 "map"))
         self.label_18.setText(_translate("VecMap", "<html><head/><body><p>Generate a vector map. Set the coloring pattern by checking the vector angle distribution.</p></body></html>"))
 
-        self.pushButton_7.setText(_translate("VecMap", "Load from csv"))
+        self.pushButton_7.setText(_translate("VecMap", "Load csv"))
         self.pushButton_8.setText(_translate("VecMap", "Disclaimer"))
-        self.label_19.setText(_translate("VecMap", "VecMap 0.1.1 Released: 06/13/2020 by Dr. Tao Ma"))
+        self.label_19.setText(_translate("VecMap", ver + " Released: " + r_date +" by Dr. Tao Ma"))
         self.label_20.setText(_translate("VecMap", "Check here for more information!"))
         self.pushButton_9.setText(_translate("VecMap", "About"))
         self.pushButton_10.setText(_translate("VecMap", "Acknoledgments"))
         self.pushButton_11.setText(_translate("VecMap", "Contact"))
-        self.pushButton_12.setText(_translate("VecMap", "Donate me!"))
+        self.pushButton_12.setText(_translate("VecMap", "Buy me a\n" "LUNCH!"))
         self.radioButton.setText(_translate("VecMap", "A-site"))
         self.radioButton_2.setText(_translate("VecMap", "B-site"))
         self.label_21.setText(_translate("VecMap", "Select which site to calculate"))
         self.pushButton_13.setText(_translate("VecMap", "Calculate"))
         self.label_7.setText(_translate("VecMap", "Scale:"))
-        self.lineEdit_2.setText(_translate("VecMap", "10"))
+        self.lineEdit_2.setText(_translate("VecMap", "8"))
         self.pushButton_14.setText(_translate("VecMap", "Oxygen\n"
 " map"))
-        self.lineEdit_3.setText(_translate("VecMap", "6"))
+        self.lineEdit_3.setText(_translate("VecMap", "4"))
         self.label_13.setText(_translate("VecMap", "Scale:"))
         self.checkBox_5.setText(_translate("VecMap", "Scale bar"))
+        self.checkBox_6.setText(_translate("VecMap", "Overlay image"))
+        self.radioButton_3.setText(_translate("VecMap", "[001]"))
+        self.radioButton_4.setText(_translate("VecMap", "[011]"))
 
 #===== Open file and set up global variables such as path etc. ======================
 #===== Connected to self.pushButton =================================================       
     def openfile(self):
         openfile_name = QFileDialog.getOpenFileName(self,'Select Image','','DigitalMicrograph (*.dm3 , *.dm4);;Image files (*.tif , *.tiff , *.jpg , *.jpeg , *.png ,*.bmp);;All Files (*)')
-        global file, my_path, file_path, title, scale, units, s, image, ABF, img_110
+        global file, my_path, file_path, title, title_adf, scale, units, s, s_adf, im, image, image_adf, ABF, img_110, Couple, overlay
         file = openfile_name[0]
                 
         if self.checkBox.isChecked(): #Set ABF toggle from the checkbox
-            ABF = 1
+            ABF = True
         else:
-            ABF = 0
+            ABF = False
+            
+        if self.checkBox_4.isChecked(): #Couple with HAADF
+            Couple = True
+        else:
+            Couple = False
             
             
-        if self.checkBox_4.isChecked():
-            img_110 = 1
+        if self.radioButton_4.isChecked():
+            img_110 = True
         else:
-            img_110 = 0
+            img_110 = False
+            
+
             
         if file:
             print('{} has been loaded!'.format(file))
@@ -311,35 +352,58 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             title = file_name
             scale = s.axes_manager[0].scale #Read scale data from the image
             units = s.axes_manager[0].units #Read units
-            s.save(my_path + 'Original image.hspy', overwrite=True) #Save a backup file in hspy format
+            s.metadata.General.title = title
+            s.save(my_path + title +'.hspy', overwrite=True) #Save a backup file in hspy format
             image = s.data
-            s.data = norm_img(s.data)
+            #s.data = norm_img(s.data)
             
-            if ABF == 1:
-                s.data = abf2haadf(s.data) #Inverse the ABF contrast to make a ADF-like image
+            if ABF:
+                s.data = np.divide(1, s.data) #Inverse the ABF contrast to make a ADF-like image
+                #s.data = abf2haadf(s.data) #Inverse the ABF contrast to make a ADF-like image
+
+                
         # Draw an image
             global f_original_img
             f_original_img = PlotCanvas()
             f_original_img.setWindowTitle(file)
-            f_original_img.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
+            f_original_img.axes.imshow(image,cmap='gray')
             f_original_img.axes.set_axis_off()
             f_original_img.axes.set_title('{} \n has been successfully loaded!'.format(title))
             f_original_img.show()
 
-        
-
+            #Load HAADF if couple is checked
+            if Couple:
+                openfile_adf = QFileDialog.getOpenFileName(self,'Select corresponding HAADF Image','','DigitalMicrograph (*.dm3 , *.dm4);;Image files (*.tif , *.tiff , *.jpg , *.jpeg , *.png ,*.bmp);;All Files (*)')
+                adf_file = openfile_adf[0]
+                s_adf = readImage(adf_file)
+                title_adf = getFileName(adf_file)
+                s_adf.metadata.General.title = title_adf
+                s_adf.save(my_path + title_adf + '.hspy', overwrite=True) #Save a backup file in hspy format
+                image_adf = s_adf.data
+                im = s_adf
+                global f_original_adf
+                f_original_adf = PlotCanvas()
+                f_original_adf.setWindowTitle(adf_file)
+                f_original_adf.axes.imshow(image_adf,cmap='gray')
+                f_original_adf.axes.set_axis_off()
+                f_original_adf.axes.set_title('The coupled HAADF image has been successfully loaded!')
+                f_original_adf.show()        
+            
+            else:
+                im = s
 
 #==== Initialize atom position module ===============================================
 #==== Connected to self.pushButton_2 ================================================ 
     def ini_atom_position(self):
         sep = int(self.lineEdit.text())
+
         try:
-            A_positions_ini = get_atom_positions(s,separation=sep)
+            A_positions_ini = get_atom_positions(im,separation=sep)
             global A_positions, f_ini
             A_positions = A_positions_ini.tolist()
             f_ini = PlotCanvas()
             f_ini.setWindowTitle('Initial atom positions for refining')
-            f_ini.axes.imshow(s.data,cmap='gray')
+            f_ini.axes.imshow(im.data,cmap='gray')
             f_ini.axes.set_axis_off()
             f_ini.axes.set_title('Left click to add or remove atoms')
             f_ini.show()
@@ -348,8 +412,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 if event.inaxes != f_ini.axes:
                     return
                 if event.button == 1:  # Left mouse button
-                    x = np.float(event.xdata)
-                    y = np.float(event.ydata)
+                    x = float(event.xdata)
+                    y = float(event.ydata)
                     atom_nearby = closest_node((x,y), A_positions)[0]
                     if distance.euclidean((x,y), A_positions[atom_nearby]) > 5:
                         A_positions.append([x, y])
@@ -404,8 +468,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 f_sep.axes[i].set_axis_off()
                 if s_factor < 1:
                     continue
-                ini_position = get_atom_positions(s, separation=s_factor)
-                f_sep.axes[i].imshow(s.data,cmap='gray')
+                ini_position = get_atom_positions(im, separation=s_factor)
+                f_sep.axes[i].imshow(im.data,cmap='gray')
                 f_sep.axes[i].scatter(np.asarray(ini_position)[:,0], np.asarray(ini_position)[:,1], s=5, color='r')
                 f_sep.axes[i].set_title('Separation = {}'.format(s_factor))
             f_sep.show()
@@ -424,23 +488,23 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 #==== Connected to self.pushButton_4 ================================================
     def refine_atom_position(self):
         #Global variables:
-        global ap_A, ap_B, ap_O, Ua, Uc, find_O
+        global ap_A, ap_B, ap_O, Ua, Uc, find_O, ap_A_abf, ap_B_abf
         #Read checkboxes
         if self.checkBox_2.isChecked():
-            find_O = 1
+            find_O = True
         else:
-            find_O = 0
+            find_O = False
                 
         if self.checkBox_3.isChecked():
-            plotpos = 1
+            plotpos = True
         else:
-            plotpos = 0
+            plotpos = False
         try:
             #Refine atom positions
             print('='*50)
             print('Refining atom positions for A-site atoms...')
             print('This may take time...')
-            sublattice_A = find_atom(s.data, A_positions, 'A-site atoms')
+            sublattice_A = find_atom(im.data, A_positions, 'A-site atoms')
             print('Refining A-site atoms done!')
             ap_A = sublattice_A.atom_positions #Refined atoms positions for A-site. NumPy array.
             #lattice_list = []
@@ -452,7 +516,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             sublattice_A.construct_zone_axes()
     
             #Find the zone axis for the initial position of B: typically 3 for [001] and 1 for [110]
-            if img_110 == 1:
+            if img_110 == True:
                 zone_axis = sublattice_A.zones_axis_average_distances[1]
             else:        
                 zone_axis = sublattice_A.zones_axis_average_distances[2]
@@ -480,25 +544,92 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             sublattice_B = find_atom(image_without_A, B_positions, 'B-site atoms', atom_color='blue')
             ap_B = sublattice_B.atom_positions ##Refined atoms positions for B-site. NumPy array.
             print('Refining B-site atoms done!')
+            #Save refined atom positions in csv
+            with open(my_path + title + '-A_positions_refined.csv','w') as A_positions_data:
+                A_positions_data.write('Refined positions for A-site atoms\n')
+                A_positions_data.write('x (px), y (px)\n')
+                for data in ap_A.tolist():
+                    A_positions_data.write('{}, {}'.format(data[0], data[1]))
+                    A_positions_data.write('\n')
+            print('Refined positions for the A-site atoms have been saved to ' + my_path + title + '-A_positions_refined.csv')
+            with open(my_path + title + '-B_positions_refined.csv','w') as B_positions_data:
+                B_positions_data.write('Refined positions for B-site atoms\n')
+                B_positions_data.write('x (px), y (px)\n')
+                for data in ap_B.tolist():
+                    B_positions_data.write('{}, {}'.format(data[0], data[1]))
+                    B_positions_data.write('\n')
+            print('Refined positions for the B-site atoms have been saved to ' + my_path + title + '-B_positions_refined.csv')
             #lattice_list.append(sublattice_B)
             #Find the position of O atoms
-            if find_O == 1:
-                #Find initial positions for O
-                AB_positions = ap_A.tolist() + ap_B.tolist()
-                sublattice_AB = Sublattice(AB_positions,image=s.data,color='y',name='Sublattice A + B')
-                sublattice_AB.construct_zone_axes()
-                zone_axis_002 = sublattice_AB.zones_axis_average_distances[2]#Only work for [001] currently
-                O_positions = sublattice_AB.find_missing_atoms_from_zone_vector(zone_axis_002) #Initial positions of O
+            if Couple:
                 print('='*50)
-                print('Subtracting sublattice A and B from the image using 2D gaussian fit...')
+                print('Refining atom positions for A-site atoms on ABF image...')
                 print('This may take time...')
-                image_without_AB=remove_atoms_from_image_using_2d_gaussian(sublattice_B.image,sublattice_B,show_progressbar=False) #Subtract both A and B from the original image
+                sublattice_A_abf = find_atom(s.data, ap_A, 'ABF A-site atoms')
+                print('Refining A-site atoms done!')
+                ap_A_abf = sublattice_A_abf.atom_positions #Refined atoms positions for A-site. NumPy array.
+                #lattice_list = []
+                #lattice_list.append(sublattice_A)
+                print('='*50)
+                print('Subtracting sublattice A from the image using 2D gaussian fit...')
+                print('This may take time...')
+                abf_image_without_A = remove_atoms_from_image_using_2d_gaussian(sublattice_A_abf.image, sublattice_A_abf, show_progressbar=False)
+                print('='*50)
+                print('Refining atom positions for sublattice B on ABF image...')
+                print('Almost there...')
+                sublattice_B_abf = find_atom(abf_image_without_A, ap_B, 'ABF B-site atoms', atom_color='blue')
+                ap_B_abf = sublattice_B_abf.atom_positions ##Refined atoms positions for B-site. NumPy array.
+                print('Refining B-site atoms done!')
+                #Save refined atom positions in csv
+                with open(my_path + title + '-A_positions_ABF_refined.csv','w') as A_ABF_positions_data:
+                    A_ABF_positions_data.write('Refined positions for A-site atoms in the ABF image\n')
+                    A_ABF_positions_data.write('x (px), y (px)\n')
+                    for data in ap_A_abf.tolist():
+                        A_ABF_positions_data.write('{}, {}'.format(data[0], data[1]))
+                        A_ABF_positions_data.write('\n')
+                print('Refined positions for the A-site atoms in the ABF image have been saved to ' + my_path + title + '-A_positions_ABF_refined.csv')
+                with open(my_path + title + '-B_positions_ABF_refined.csv','w') as B_ABF_positions_data:
+                    B_ABF_positions_data.write('Refined positions for B-site atoms in the ABF image\n')
+                    B_ABF_positions_data.write('x (px), y (px)\n')
+                    for data in ap_B_abf.tolist():
+                        B_ABF_positions_data.write('{}, {}'.format(data[0], data[1]))
+                        B_ABF_positions_data.write('\n')
+                print('Refined positions for the B-site atoms in the ABF image have been saved to ' + my_path + title + '-B_positions_ABF_refined.csv')
+                
+            if find_O:
+                #Find initial positions for O
+                #For [001] images:
+                if not img_110:
+                    AB_positions = ap_A.tolist() + B_positions #Use initial B positions instead of refined to get better plane symmetry
+                    sublattice_AB = Sublattice(AB_positions,image=s.data,color='y',name='Sublattice A + B')
+                    sublattice_AB.construct_zone_axes(atom_plane_tolerance=0.8)
+                    zone_axis_002 = sublattice_AB.zones_axis_average_distances[2]#Only work for [001] currently
+                    O_positions = sublattice_AB.find_missing_atoms_from_zone_vector(zone_axis_002) #Initial positions of O
+                    print('='*50)
+                    print('Subtracting sublattice A and B from the image using 2D gaussian fit...')
+                    print('This may take time...')
+                    
+                else:
+                    zone_axis2 = sublattice_A.zones_axis_average_distances[2]
+                    O_positions = sublattice_A.find_missing_atoms_from_zone_vector(zone_axis2)
+                
+                if Couple:
+                    image_without_AB=remove_atoms_from_image_using_2d_gaussian(sublattice_B_abf.image,sublattice_B_abf,show_progressbar=False)
+                else:
+                    image_without_AB=remove_atoms_from_image_using_2d_gaussian(sublattice_B.image,sublattice_B,show_progressbar=False) #Subtract both A and B from the original image
                 #Refine O positions
                 print('='*50)
                 print('Refining atom positions for sublattice O...')
                 sublattice_O = find_atom(image_without_AB, O_positions, 'O sites', atom_color='g')
                 ap_O = sublattice_O.atom_positions #Refined atoms positions for O. NumPy array.
                 print('Refining O atoms done!')
+                with open(my_path + title + '-B_positions_refined.csv','w') as O_positions_data:
+                    O_positions_data.write('Refined positions for O\n')
+                    O_positions_data.write('x (px), y (px)\n')
+                    for data in ap_O.tolist():
+                        O_positions_data.write('{}, {}'.format(data[0], data[1]))
+                        O_positions_data.write('\n')
+                print('Refined positions for O have been saved to ' + my_path + title + '-O_positions.csv')
                 #lattice_list.append(sublattice_O)
             print('Refining atoms done!') 
             #Construct atom position results with sublattice A and B.
@@ -509,44 +640,100 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             #=======================
             #Plot and save figures
             #=======================
-            if plotpos == 1: 
+            if plotpos: 
                 print('='*50)
                 print('Saving result plots...')
-                global f_A_site, f_B_site, f_AB
-                #Plot A-site atom positions with the original image overlayed.
-                f_A_site = PlotCanvas()
-                f_A_site.setWindowTitle('VecMap0.1: Refined positions of A-site atoms')
-                f_A_site.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
-                f_A_site.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
-                f_A_site.axes.set_axis_off()
-                f_A_site.show()
-                f_A_site.fig.savefig(my_path + title + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
-    
-                #Plot B-site atom positions with the original image overlayed.
-                f_B_site = PlotCanvas()
-                f_B_site.setWindowTitle('VecMap0.1: Refined positions of B-site atoms')
-                f_B_site.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
-                f_B_site.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
-                f_B_site.axes.set_axis_off()
-                f_B_site.show()
-                f_B_site.fig.savefig(my_path + title + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
-    
-                #Plot both A-site and B-site on the image
-                f_AB = PlotCanvas()
-                f_AB.setWindowTitle('VecMap0.1: A-site atoms vs. B-site atoms')
-                f_AB.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
-                f_AB.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
-                f_AB.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
-                f_AB.axes.set_axis_off()
-                f_AB.show()
-                f_AB.fig.savefig(my_path + title + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
-    
+                global f_A_site, f_B_site, f_AB, f_A_site_adf, f_B_site_abf, f_AB_adf
+                if Couple:
+                    #Plot A-site atom positions with the original image overlayed.
+                    f_A_site = PlotCanvas()
+                    f_A_site.setWindowTitle(ver + ': Refined positions of A-site atoms in ABF')
+                    f_A_site.axes.imshow(image,cmap='gray')
+                    f_A_site.axes.scatter(ap_A_abf[:,0], ap_A_abf[:,1], s=2, color='r')
+                    f_A_site.axes.set_axis_off()
+                    f_A_site.show()
+                    f_A_site.fig.savefig(my_path + title + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+        
+                    #Plot B-site atom positions with the original image overlayed.
+                    f_B_site = PlotCanvas()
+                    f_B_site.setWindowTitle(ver + ': Refined positions of B-site atoms in ABF')
+                    f_B_site.axes.imshow(image,cmap='gray')
+                    f_B_site.axes.scatter(ap_B_abf[:,0], ap_B_abf[:,1], s=2, color='b')
+                    f_B_site.axes.set_axis_off()
+                    f_B_site.show()
+                    f_B_site.fig.savefig(my_path + title + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+        
+                    #Plot both A-site and B-site on the image
+                    f_AB = PlotCanvas()
+                    f_AB.setWindowTitle(ver + ': A-site atoms vs. B-site atoms in ABF')
+                    f_AB.axes.imshow(image,cmap='gray')
+                    f_AB.axes.scatter(ap_A_abf[:,0], ap_A_abf[:,1], s=2, color='r')
+                    f_AB.axes.scatter(ap_B_abf[:,0], ap_B_abf[:,1], s=2, color='b')
+                    f_AB.axes.set_axis_off()
+                    f_AB.show()
+                    f_AB.fig.savefig(my_path + title + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+                    
+                    #Plot A-site atom positions on ADF with the original image overlayed.
+                    f_A_site_adf = PlotCanvas()
+                    f_A_site_adf.setWindowTitle(ver + ': Refined positions of A-site atoms in ADF')
+                    f_A_site_adf.axes.imshow(image_adf,cmap='gray')
+                    f_A_site_adf.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
+                    f_A_site_adf.axes.set_axis_off()
+                    f_A_site_adf.show()
+                    f_A_site_adf.fig.savefig(my_path + title_adf + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+        
+                    #Plot B-site atom positions with the original image overlayed.
+                    f_B_site_adf = PlotCanvas()
+                    f_B_site_adf.setWindowTitle(ver + ': Refined positions of B-site atoms in ADF')
+                    f_B_site_adf.axes.imshow(image_adf,cmap='gray')
+                    f_B_site_adf.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_B_site_adf.axes.set_axis_off()
+                    f_B_site_adf.show()
+                    f_B_site_adf.fig.savefig(my_path + title_adf + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+        
+                    #Plot both A-site and B-site on the image
+                    f_AB_adf = PlotCanvas()
+                    f_AB_adf.setWindowTitle(ver + ': A-site atoms vs. B-site atoms in ADF')
+                    f_AB_adf.axes.imshow(image_adf,cmap='gray')
+                    f_AB_adf.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
+                    f_AB_adf.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_AB_adf.axes.set_axis_off()
+                    f_AB_adf.show()
+                    f_AB_adf.fig.savefig(my_path + title_adf + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+                else:
+                    #Plot A-site atom positions with the original image overlayed.
+                    f_A_site = PlotCanvas()
+                    f_A_site.setWindowTitle(ver + ': Refined positions of A-site atoms')
+                    f_A_site.axes.imshow(image,cmap='gray')
+                    f_A_site.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
+                    f_A_site.axes.set_axis_off()
+                    f_A_site.show()
+                    f_A_site.fig.savefig(my_path + title + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+        
+                    #Plot B-site atom positions with the original image overlayed.
+                    f_B_site = PlotCanvas()
+                    f_B_site.setWindowTitle(ver + ': Refined positions of B-site atoms')
+                    f_B_site.axes.imshow(image,cmap='gray')
+                    f_B_site.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_B_site.axes.set_axis_off()
+                    f_B_site.show()
+                    f_B_site.fig.savefig(my_path + title + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
+        
+                    #Plot both A-site and B-site on the image
+                    f_AB = PlotCanvas()
+                    f_AB.setWindowTitle(ver + ': A-site atoms vs. B-site atoms')
+                    f_AB.axes.imshow(image,cmap='gray')
+                    f_AB.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
+                    f_AB.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_AB.axes.set_axis_off()
+                    f_AB.show()
+                    f_AB.fig.savefig(my_path + title + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
                 #Plot O atoms if available
-                if find_O == 1:
+                if find_O:
                     global f_O_site, f_all
                     f_O_site = PlotCanvas()
-                    f_O_site.setWindowTitle('VecMap0.1: Refined positions of O atoms')
-                    f_O_site.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
+                    f_O_site.setWindowTitle(ver + ': Refined positions of O atoms')
+                    f_O_site.axes.imshow(image,cmap='gray')
                     f_O_site.axes.scatter(ap_O[:,0], ap_O[:,1], s=2, color='g')
                     f_O_site.axes.set_axis_off()
                     f_O_site.show()
@@ -554,15 +741,14 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     
                     #Plot all the atoms on the image
                     f_all = PlotCanvas()
-                    f_all.setWindowTitle('VecMap0.1: A-site vs. B-site vs. O atoms')
-                    f_all.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
+                    f_all.setWindowTitle(ver + ': A-site vs. B-site vs. O atoms')
+                    f_all.axes.imshow(image,cmap='gray')
                     f_all.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
                     f_all.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
                     f_all.axes.scatter(ap_O[:,0], ap_O[:,1], s=2, color='g')
                     f_all.axes.set_axis_off()
                     f_all.show()
                     f_all.fig.savefig(my_path + title + '_A_B_O atoms' + '.tif',dpi=600,bbox_inches='tight')  
-            if plotpos == 1:
                 print('All figures have been saved to '+ my_path)
         except NameError:
             #Pop up an error window
@@ -579,7 +765,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     def cal_disp(self):
         try:
             #Global variables
-            global U_avg, disp, disp_O, disp_atom
+            global U_avg, disp, disp_O, disp_adf, disp_atom, ideal_pos, ideal_O_pos
             # Read cal_site from the radio button
             # 0 to calculate A site in relative to B site; 1 to calculate B site in relative to A site
             if self.radioButton.isChecked():
@@ -595,46 +781,77 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             if cal_site == 0:#Calculate A site
                 disp_atom = 'A-site'
                 rel_atom = 'B-site' 
-                ap_0 = ap_A.tolist()
-                ap_1 = ap_B.tolist()
+                if Couple:
+                   ap_0 = ap_A_abf.tolist()
+                   ap_1 = ap_B_abf.tolist()
+                   ap_0_adf = ap_A.tolist()
+                   ap_1_adf = ap_B.tolist()
+                else:
+                    ap_0 = ap_A.tolist()
+                    ap_1 = ap_B.tolist()
             else:
                 disp_atom = 'B-site'
                 rel_atom = 'A-site'
-                ap_0 = ap_B.tolist()
-                ap_1 = ap_A.tolist()
+                if Couple:
+                    ap_0 = ap_B_abf.tolist()
+                    ap_1 = ap_A_abf.tolist() 
+                    ap_0_adf = ap_B.tolist()
+                    ap_1_adf = ap_A.tolist()
+                else:
+                    ap_0 = ap_B.tolist()
+                    ap_1 = ap_A.tolist()
             print('='*50)
             print('====Calculate {} in relative to {}===='.format(disp_atom, rel_atom))
     
-            ideal_pos, neighbor_pos = find_ideal_pos(ap_0, ap_1, U_avg, scale)
+            ideal_pos, neighbor_pos = find_ideal_pos(ap_0, ap_1, U_avg, scale, img_110=cal_110)
+
             disp = find_displacement(ap_0, ideal_pos, U_avg, scale)
-    
+
+
             #Save the displacement data
             with open(my_path + title + '-{}-disp.csv'.format(disp_atom),'w') as disp_data:
-                disp_data.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg)\n')
-                for data in disp:
-                    disp_data.write('{}, {}, {}, {}, {}, {}'.format(data[0], data[1], data[2], data[3], data[4], data[5]))
+                disp_data.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg), Neighboring atoms (x y)\n')
+                for i in range(len(disp)):
+                    disp_data.write('{}, {}, {}, {}, {}, {}, '.format(disp[i][0], disp[i][1], disp[i][2], disp[i][3], disp[i][4], disp[i][5]))
+                    for pos in neighbor_pos[i]:
+                        for atom in pos:
+                            disp_data.write('{}, '.format(atom))
                     disp_data.write('\n')
+            print(my_path + title + '-{}-disp.csv'.format(disp_atom) + ' has been saved!')
+            #Couple ABF/HAADF
+            if Couple:
+                ideal_pos_adf, neighbor_pos_adf = find_ideal_pos(ap_0_adf, ap_1_adf, U_avg, scale, img_110=cal_110)
+                disp_adf = find_displacement(ap_0_adf, ideal_pos_adf, U_avg, scale)
+                with open(my_path + title_adf + '-{}-disp.csv'.format(disp_atom),'w') as disp_data_adf:
+                    disp_data_adf.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg)\n')
+                    for i in range(len(disp_adf)):
+                        disp_data_adf.write('{}, {}, {}, {}, {}, {}, '.format(disp_adf[i][0], disp_adf[i][1], disp_adf[i][2], disp_adf[i][3], disp_adf[i][4], disp_adf[i][5]))
+                        for pos in neighbor_pos_adf[i]:
+                            for atom in pos:
+                                disp_data_adf.write('{}, '.format(atom))
+                        disp_data_adf.write('\n')
+                print(my_path + title_adf + '-{}-disp.csv'.format(disp_atom) + ' has been saved!')
     
             #Save the neigboring atoms as well
-            with open(my_path + 'neighboring atoms.csv','w') as neighbor_data:
-                for data in neighbor_pos:
-                    n = len(data)
-                    for idx in range(n):
-                        neighbor_data.write('{0}, {1}, '.format(*data[idx]))
-                    neighbor_data.write('\n')
-            
+            #with open(my_path + 'neighboring atoms.csv','w') as neighbor_data:
+            #    for data in neighbor_pos:
+            #        n = len(data)
+            #        for idx in range(n):
+            #            neighbor_data.write('{0}, {1}, '.format(*data[idx]))
+            #        neighbor_data.write('\n')
+            #print('Atomic displacement data saved to ' + my_path + title + '-disp.csv.')
             #Calculate O map and save        
             if O_map == 1:
                 ap_2 = ap_O.tolist()
-                ideal_O_pos = find_ideal_O_pos(ap_0, ap_1, U_avg, scale)
-                disp_O = find_displacement(ap_2, ideal_O_pos, U_avg, scale)
+                ideal_O_pos = find_ideal_O_pos(ap_0, ap_1, Ua, scale, O = ap_2, img_110 = img_110, ref = rel_atom)
+                disp_O = find_displacement(ap_2, ideal_O_pos, Ua, scale)
         
                 with open(my_path + title + '-disp_O_by_{}.csv'.format(disp_atom),'w') as disp_data:
                     disp_data.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg)\n')
                     for data in disp_O:
                         disp_data.write('{}, {}, {}, {}, {}, {}'.format(data[0], data[1], data[2], data[3], data[4], data[5]))
                         disp_data.write('\n')
-            print('Atomic displacement data saved to ' + my_path + title + '-disp.csv.')
+                print('O displacement data saved to ' + my_path + title + '-disp_O_by_{}.csv.'.format(disp_atom))
         except NameError:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -648,11 +865,12 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 #======== Connected to self.pushButton_5 =============================================
     def vec_ang_dist(self):
         try:
+            global disp_angles
             disp_angles = [lst[5] for lst in disp]
             global f_vec_ang_dist
             f_vec_ang_dist = PlotCanvas()
             f_vec_ang_dist.setWindowTitle('Histogram of Displacement Directions')
-            f_vec_ang_dist.axes.hist(disp_angles, bins=50)
+            f_vec_ang_dist.axes.hist(disp_angles, bins=50, range=(0,360))
             f_vec_ang_dist.axes.set_xlabel('Displacement angles (Degrees)')
             f_vec_ang_dist.axes.set_xticks(list(range(0,390,30)))
             f_vec_ang_dist.axes.set_ylabel('Frequency')
@@ -670,11 +888,15 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 #========= Generate vector map module =============================================
 #========= Connected to self.pushButton_6 ===========================================
     def show_vec_map(self):
+        if self.checkBox_6.isChecked():
+            overlay = True
+        else:
+            overlay = False
         a_len = int(self.lineEdit_2.text())
         if self.checkBox_5.isChecked():
-            s_bar = 1
+            s_bar = True
         else:
-            s_bar = 0
+            s_bar = False
         try:
             # Read from lineEdits:
             ang_lst = str(self.lineEdit_4.text()).split() #A list of displacement directions. This is used to determine the coloring pattern. For single color rendering, just leave it as [0].
@@ -682,23 +904,79 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             color_lst = str(self.lineEdit_5.text()).split()
             #====Plot====
             disp_color = set_arrow_color(disp, ang_lst, color_lst)
+            
+            v_x, v_y =image.shape
+            img_blank = 255 * np.ones((v_x, v_y,3), dtype=np.uint8)
+
             global f_vec_map
             f_vec_map = PlotCanvas()
-            f_vec_map.setWindowTitle('VecMap0.1: Vector Map')
-            f_vec_map.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
+            f_vec_map.setWindowTitle(ver + ': Vector Map')
+            
             f_vec_map.axes.set_axis_off()
+
+            if overlay:               
+                f_vec_map.axes.imshow(image,cmap='gray')
+            else:                
+                f_vec_map.axes.imshow(img_blank)
+                s_bar = False
+                f_vec_map.axes.axis('on')
+                f_vec_map.axes.get_xaxis().set_visible(False)
+                f_vec_map.axes.get_yaxis().set_visible(False)
+                f_vec_map.axes.spines['bottom'].set_color('blue')
+                f_vec_map.axes.spines['top'].set_color('blue')
+                f_vec_map.axes.spines['left'].set_color('blue')
+                f_vec_map.axes.spines['right'].set_color('blue')
+            
             for vec in disp_color:
                 f_vec_map.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=1, head_width=a_len/3, head_length=a_len/3)
-            
+
             #Add a scale bar
-            if s_bar == 1:            
+            if s_bar:            
                 scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
                 f_vec_map.axes.add_artist(scalebar)            
     
             f_vec_map.show()
-            f_vec_map.fig.savefig(my_path + title + "_{}_vec_map.tif".format(disp_atom),dpi=1200,bbox_inches='tight',overwrite=True)
+            if overlay:
+                f_vec_map.fig.savefig(my_path + title + "_{}_vec_map_img_overlaid.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
+            else:
+                f_vec_map.fig.savefig(my_path + title + "_{}_vec_map.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
             print('The vector map has been saved to ' + my_path + title + "_{}_vec_map.tif! Enjoy!".format(disp_atom))
 
+            if Couple:
+                disp_color_adf = set_arrow_color(disp_adf, ang_lst, color_lst)
+                global f_vec_map_adf
+                f_vec_map_adf = PlotCanvas()
+                f_vec_map_adf.setWindowTitle(ver + ': Vector Map')
+                f_vec_map_adf.axes.set_axis_off()
+                if overlay:
+                    f_vec_map_adf.axes.imshow(image_adf,cmap='gray')
+                else:
+                    f_vec_map_adf.axes.imshow(img_blank)
+                    s_bar = 0
+                    f_vec_map_adf.axes.axis('on')
+                    f_vec_map_adf.axes.get_xaxis().set_visible(False)
+                    f_vec_map_adf.axes.get_yaxis().set_visible(False)
+                    f_vec_map_adf.axes.spines['bottom'].set_color('blue')
+                    f_vec_map_adf.axes.spines['top'].set_color('blue')
+                    f_vec_map_adf.axes.spines['left'].set_color('blue')
+                    f_vec_map_adf.axes.spines['right'].set_color('blue')
+
+
+                for vec in disp_color_adf:
+                    f_vec_map_adf.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=1, head_width=a_len/3, head_length=a_len/3)
+
+                #Add a scale bar
+                if s_bar:            
+                    scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
+                    f_vec_map_adf.axes.add_artist(scalebar)
+                
+                f_vec_map_adf.show()
+                if overlay:
+                    f_vec_map_adf.fig.savefig(my_path + title_adf + "_{}_vec_map_img_overlaid.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
+                else:
+                    f_vec_map_adf.fig.savefig(my_path + title_adf + "_{}_vec_map.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
+
+                print('The vector map has been saved to ' + my_path + title + "_{}_vec_map.tif! Enjoy!".format(disp_atom))
 
         except NameError:
             msg = QMessageBox()
@@ -720,25 +998,47 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 #========= Connected to self.pushButton_14 =========================================== 
     def show_O_vec_map(self):
         O_len = int(self.lineEdit_3.text())
-        if self.checkBox_5.isChecked():
-            s_bar = 1
+        if self.checkBox_6.isChecked():
+            overlay = True
         else:
-            s_bar = 0
+            overlay = False
+        if self.checkBox_5.isChecked():
+            s_bar = True
+        else:
+            s_bar = False
+        v_x, v_y =image.shape
+        img_blank = 255 * np.ones((v_x, v_y, 3),dtype=np.uint8)
         try:
             global f_vec_map_O
             f_vec_map_O = PlotCanvas()
-            f_vec_map_O.setWindowTitle('VecMap0.1: Vector Map of Oxygen atoms')
-            f_vec_map_O.axes.imshow(image,cmap='gray', vmin=0, vmax=255)
+            f_vec_map_O.setWindowTitle(ver + ': Vector Map of Oxygen atoms')
             f_vec_map_O.axes.set_axis_off()
+            if overlay:
+                f_vec_map_O.axes.imshow(image,cmap='gray')
+            else:
+                f_vec_map_O.axes.imshow(img_blank)
+                s_bar = False
+                f_vec_map_O.axes.axis('on')
+                f_vec_map_O.axes.get_xaxis().set_visible(False)
+                f_vec_map_O.axes.get_yaxis().set_visible(False)
+                f_vec_map_O.axes.spines['bottom'].set_color('blue')
+                f_vec_map_O.axes.spines['top'].set_color('blue')
+                f_vec_map_O.axes.spines['left'].set_color('blue')
+                f_vec_map_O.axes.spines['right'].set_color('blue')
+                
+
             for vec in disp_O:
                 f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color='red',linewidth=1,head_width=O_len/3,head_length=O_len/3)
             #Add a scale bar
-            if s_bar == 1:            
+            if s_bar:            
                 scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
                 f_vec_map_O.axes.add_artist(scalebar)            
             
             f_vec_map_O.show()
-            f_vec_map_O.fig.savefig(my_path + title + "_O_vec_map_by_{}.tif".format(disp_atom),dpi=1200,bbox_inches='tight',overwrite=True)
+            if overlay:
+                f_vec_map_O.fig.savefig(my_path + title + "_O_vec_map_by_{}_img_overlaid.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
+            else:
+                f_vec_map_O.fig.savefig(my_path + title + "_O_vec_map_by_{}.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
             print('The O vector map has been saved to ' + my_path + title + "_O_vec_map_by_{}.tif! Enjoy!".format(disp_atom))
         except NameError:
             msg = QMessageBox()
@@ -752,26 +1052,28 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 #============ Connected to self.pushButton_7 =======================================
     def load_from_csv(self):
         # Load displacement data from the csv file saved previously
-        global s, my_path, title, scale, units, disp, disp_O, image, disp_atom
+        global s, my_path, title, scale, units, disp, disp_O, image, disp_atom, Couple, find_O
         openfile_name = QFileDialog.getOpenFileName(self,'Select the displacement data','','CSV (*.csv);;All Files (*)')
         file = openfile_name[0]
         if file:
             my_path = getDirectory(file,'/')
-            s = readImage(my_path + 'Original image.hspy')
-            title = s.metadata.General.title
+            file_name = getFileName(file)
+            title = file_name[:-12]
+            s = readImage(my_path + title + '.hspy')
             scale = s.axes_manager[0].scale
             units = s.axes_manager[0].units
             image = s.data
             disp = load_disp_data_from_csv(file)
+            Couple = False #Do not support "couple" mode
             # Look for the O data
             disp_atom = file[-15:-9]
             file_O_disp = my_path + title + '-disp_O_by_' + disp_atom + '.csv'
             if os.path.isfile(file_O_disp):
                 disp_O = load_disp_data_from_csv(file_O_disp)
-                find_O = 1
+                find_O = True
                 print('Found O displacement data!')
             else:
-                find_O = 0
+                find_O = False
                 print('No O displacement data was found! Will do {} atom displacement only!'.format(disp_atom))
                 
                     
@@ -792,7 +1094,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         "2. Ma, T. et al. <a href=\"https://doi.org/10.1063/1.5115039\">Appl. Phys. Lett. 115, 122902 (2019).</a>"
         "<br>" \
         "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND.<br>")
-        msg.setWindowTitle("VecMap0.1: Disclaimer")
+        msg.setWindowTitle(ver + ": Disclaimer")
 
         
         def disclaimerButtonClick():
@@ -810,15 +1112,16 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     def show_about(self):
         msg = QMessageBox()
 #        msg.setIcon(QMessageBox.Information)
-        msg.setText("VecMap v0.1.1"\
+        msg.setText("VecMap: a convenient tool to calculate atomic displacements in perovskite structures"\
                     "<br>"\
-                    "Designed by Dr. Tao Ma"\
+                    "This app was designed by Dr. Tao Ma"\
                     "<br>"\
-                    "06/13/2020"\
-                    "<br>"
-                    "First version release!<br>"
-                    "Get more information and<br> source code from my <a href=\"http://www-personal.umich.edu/~taoma/VectorMap.html\">website</a>.")
-        msg.setWindowTitle("VecMap0.1: About")
+                    "Version: {}  Released: {}"\
+                    "<br>"\
+                    "Hope you get good results and publications from it!"\
+                    "<br>"\
+                    "Get more information and source code from <a href=\"https://github.com/matao1984/vec-map\">here</a>.".format(ver, r_date))
+        msg.setWindowTitle(ver + ": About")
 
         returnValue = msg.exec()
 
@@ -837,7 +1140,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     "Peña, F. de la et al. <a href=\"http://doi.org/10.5281/zenodo.3396791\">hyperspy/hyperspy: HyperSpy v1.5.2 (2019).</a>" \
                     "<br>"
                     "Nord, M. et al. <a href=\"https://doi.org/10.1186/s40679-017-0042-5\">Adv. Struct. Chem. Imaging 3, 9 (2017).</a>")
-        msg.setWindowTitle("VecMap0.1: Acknowledgments")
+        msg.setWindowTitle(ver + ": Acknowledgments")
 
         returnValue = msg.exec()
         
@@ -848,7 +1151,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         msg.setText("Ask questions and report bugs to:"\
                     "<br>"
                     "<a href=\"mailto:matao1984@gmail.com\">matao1984@gmail.com</a>")
-        msg.setWindowTitle("VecMap0.1: Contact")
+        msg.setWindowTitle(ver + ": Contact")
 
         returnValue = msg.exec()
         
@@ -857,10 +1160,10 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     def donate(self):
         msg = QMessageBox()
         msg.setText("I will make this app freely available for the society.<br>"\
-                    "If you like this app, show your appreciation by <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NQTP8WZX9VDRQ&currency_code=USD&source=url\">donating me!</a>"\
+                    "If you like this app, show your appreciation and <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NQTP8WZX9VDRQ&currency_code=USD&source=url\">buy me a lunch!</a>"\
                     "<br>"\
-                    "Your support is my motivation!<br>")
-        msg.setWindowTitle("VecMap0.1: Donate me!")
+                    "Your support is my motivation!")
+        msg.setWindowTitle(ver + ": Buy me a LUNCH!")
 
         returnValue = msg.exec()
 
@@ -869,7 +1172,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 class PlotCanvas(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
-        self.setWindowTitle('VecMap0.1: Plot')
+        self.setWindowTitle(ver + ': Plot')
 
         self.create_main_frame()
         
@@ -907,7 +1210,7 @@ class PlotCanvas(QMainWindow):
 class SeparationCanvas(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
-        self.setWindowTitle('VecMap0.1: Find separation factors')
+        self.setWindowTitle(ver + ': Find separation factors')
 
         self.create_main_frame()
         
@@ -993,16 +1296,16 @@ def find_atom(img, ini_pos, atom_name, atom_color='r'):
     #Refine atom positions for a sublattice
     #img: an array of image data; ini_pos: initial positions; atom_name: a string for name; atom_color: a string for color
     #img_110: For [110] image
-    sublattice = Sublattice(ini_pos, image=img, color=atom_color, name=atom_name)
+    sublattice = Sublattice(ini_pos, image=img, color=atom_color, name=atom_name, fix_negative_values=True)
     sublattice.find_nearest_neighbors()
     sublattice.refine_atom_positions_using_center_of_mass(show_progressbar=False)
     sublattice.refine_atom_positions_using_2d_gaussian(show_progressbar=False)
     return sublattice #Return an atomap sublattice object
 
 
-def find_neighboring_atoms(P, A, Ua, tol=1.2):
+def find_neighboring_atoms(P, A, Ua, tol=1.3):
     # Define a function to find the neighboring atoms of P(x,y) from a list of atoms A.
-    # P:a given atom (x,y); A: a list of atoms; Ua: A threashold in px, 0.707*a for [001] and 0.5*a for [110]
+    # P: a given atom (x,y); A: a list of atoms; Ua: A threashold in px, 0.707*a for [001] and 0.5*a for [110]
     x, y = P
     N = [a for a in A if (a[0]-x)**2 + (a[1]-y)**2 < (Ua * tol) **2] #A list to store the neighboring atoms
     N = sorted(N, key=lambda x: (x[0] ** 2 + x[1] ** 2) ** 0.5)
@@ -1064,39 +1367,61 @@ def find_ideal_pos(A, B, Ua, scale, img_110=False):
             Neighbor_positions.append(Neighbor)
     return ideal_positions, Neighbor_positions
     
-def find_ideal_O_pos(A, B, Ua, scale):
+def find_ideal_O_pos(A, B, Ua, scale, O = None, img_110=False, ref = None):
     #calculate the ideal atomic positions for O in a un-distorted perovskite structure
-    #only support [001] images
+    #[001] images
     ideal_O_positions = []
-    for atom in A:
-        Neighbor = find_neighboring_atoms(atom,B,Ua / scale * 0.707)
-        if len(Neighbor) == 4:
-            n_0 = Neighbor.pop(0)
-            n_1 = Neighbor.pop(closest_node(n_0, Neighbor)[0])
-            n_2 = Neighbor.pop(closest_node(n_0,Neighbor)[0])
-            n_3 = Neighbor.pop()
-            o_0 = (n_0[0] + n_1[0]) / 2, (n_0[1] + n_1[1]) / 2
-            ideal_O_positions.append(o_0)
-            o_1 = (n_0[0] + n_2[0]) / 2, (n_0[1] + n_2[1]) / 2
-            ideal_O_positions.append(o_1)
-            o_2 = (n_1[0] + n_3[0]) / 2, (n_1[1] + n_3[1]) / 2
-            ideal_O_positions.append(o_2)
-            o_3 = (n_2[0] + n_3[0]) / 2, (n_2[1] + n_3[1]) / 2
-            ideal_O_positions.append(o_3)
-    ideal_O_positions = list(dict.fromkeys(ideal_O_positions))
-    return ideal_O_positions
+
+    if not img_110:
+        for atom in A:
+            Neighbor = find_neighboring_atoms(atom,B,Ua / scale * 0.707)
+            if len(Neighbor) == 4:
+                n_0 = Neighbor.pop(0)
+                n_1 = Neighbor.pop(closest_node(n_0, Neighbor)[0])
+                n_2 = Neighbor.pop(closest_node(n_0,Neighbor)[0])
+                n_3 = Neighbor.pop()
+                o_0 = (n_0[0] + n_1[0]) / 2, (n_0[1] + n_1[1]) / 2
+                ideal_O_positions.append(o_0)
+
+                o_1 = (n_0[0] + n_2[0]) / 2, (n_0[1] + n_2[1]) / 2
+                ideal_O_positions.append(o_1)
+
+                o_2 = (n_1[0] + n_3[0]) / 2, (n_1[1] + n_3[1]) / 2
+                ideal_O_positions.append(o_2)
+
+                o_3 = (n_2[0] + n_3[0]) / 2, (n_2[1] + n_3[1]) / 2
+                ideal_O_positions.append(o_3)
+
+        ideal_O_positions = list(dict.fromkeys(ideal_O_positions))
+        return ideal_O_positions
+    #[110] images
+    #B-site is the reference
+    if ref == 'B-site':
+        for atom in O:
+            Neighbor = find_neighboring_atoms(atom, B, Ua / scale * 0.5)
+            if len(Neighbor) == 2:
+                O_pos = (Neighbor[0][0] + Neighbor[1][0]) / 2, (Neighbor[0][1] + Neighbor[1][1]) / 2
+                ideal_O_positions.append(O_pos)
+        return ideal_O_positions
+    if ref == 'A-site':
+        for atom in O:
+            Neighbor = find_neighboring_atoms(atom, B, Ua / scale * 0.866)
+            if len(Neighbor) == 4:
+                ap_center = math_center(*Neighbor)
+                ideal_O_positions.append(ap_center)
+        return ideal_O_positions
             
 def find_displacement(A, A_com, Ua, scale):
     #find atomic displacement of A
     #A_com, A are lists of atom coordinates; Ua is the estimated lattice paramter in nm; scale is the image pixel size
     disp = []
     for atom in A_com:
-        arrow_end = closest_node(atom,A)[1] 
-        vec_len = distance.euclidean(arrow_end,atom)
-        if vec_len > 0.14 * Ua / scale:
+        arrow = closest_node(atom,A)[1] 
+        vec_len = distance.euclidean(arrow,atom)
+        if vec_len > 0.3 * Ua / scale:
             continue
-        dx = arrow_end[0]-atom[0]
-        dy = arrow_end[1]-atom[1]
+        dx = arrow[0]-atom[0]
+        dy = arrow[1]-atom[1]
     #calculate the displacement vector angle according to dx, dy. 
         if dy >= 0 and dx >= 0:
             vec_ang = math.degrees(math.atan(dy/dx)) 
@@ -1106,7 +1431,7 @@ def find_displacement(A, A_com, Ua, scale):
             vec_ang = math.degrees(math.atan(dy/dx)) + 180
         else:
             vec_ang = 360 + math.degrees(math.atan(dy/dx))
-        disp.append([atom[0], atom[1], dx, dy, scale*1000*vec_len, vec_ang])
+        disp.append([arrow[0], arrow[1], dx, dy, scale*1000*vec_len, vec_ang])
     return disp
 
     
@@ -1142,7 +1467,7 @@ def load_disp_data_from_csv(file):
         print(lines[0])
         for lin in lines[1:]:
             lin_data = lin.strip().split(', ')
-            disp_data.append([float(data) for data in lin_data])
+            disp_data.append([float(data) for data in lin_data[:6]])
         return disp_data
     
 
@@ -1157,9 +1482,9 @@ def main():
           Address your questions and suggestions to matao1984@gmail.com.
           Please see the "Disclaimer" before use!
           Hope you get good results and publications from it!
-                          
-          Version 0.1.1 06/13/2020
           ''')
+                
+    print('          Version: ' + ver + ' Released: ' + r_date)
     print('='*50)
     import sys
     app = QtWidgets.QApplication(sys.argv)

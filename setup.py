@@ -176,7 +176,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'vec-map=VecMap.vec_map:main',
+            'vecmap=VecMap.vec_map:main',
         ],
     },
 

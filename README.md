@@ -22,8 +22,9 @@ In case you don't have git installed, run the following script:
 If git raises an error about an existing "vecmap" folder, delete it and retry.
 Then navigate to the folder that was just downloaded, and run the setup script:
 
-``cd c:/Users/xxx/Documents/vecmap``
-``pip install -e ./``
+```cd c:/Users/xxx/Documents/vecmap
+pip install -e ./
+```
 
 If other errors happen in the installation, most likely they are related to ``hyperSpy`` or ``atomap`` packages which are the main dependencies. It is worth trying in the Anaconda console to install them first: ``pip install hyperspy atomap``.
 
@@ -37,13 +38,12 @@ A GUI will pop up.
 
 In the Windows system, you can create a bat file with the following content:
 
-``
-@echo off
+```@echo off
 
 CALL  C:\ProgramData\Anaconda3\Scripts\activate.bat C:\ProgramData\Anaconda3\envs\vecmap
 vec-map
 
 echo on 
-``
+```
 
 Save this bat, e.g., on your desktop and double-click it to run the app.

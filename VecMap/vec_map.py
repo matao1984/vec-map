@@ -266,7 +266,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.checkBox.setText(_translate("VecMap", "ABF image"))
         self.label.setText(_translate("VecMap", "Step 1. Load image"))
         self.label_2.setText(_translate("VecMap", "<html><head/><body><p>Load a HR-STEM image with a perovskite structure. Support [001] and [011] zone axes. Filtered image is preferred.</p><p><br/></p></body></html>"))
-        self.lineEdit.setText(_translate("VecMap", "8"))
+        self.lineEdit.setText(_translate("VecMap", "16"))
         self.label_3.setText(_translate("VecMap", "Step 2. Initialize atom positions"))
         self.label_4.setText(_translate("VecMap", "Separation factor"))
         self.pushButton_2.setText(_translate("VecMap", "Initialize"))

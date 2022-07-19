@@ -1161,7 +1161,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     def donate(self):
         msg = QMessageBox()
         msg.setText("I will make this app freely available for the society.<br>"\
-                    "If you like this app, show your appreciation and <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NQTP8WZX9VDRQ&currency_code=USD&source=url\">buy me a lunch!</a>"\
+                    "If you like this app, show your appreciation and <a href=\"https://www.paypal.com/donate/?business=ZCSWE88TR2YHY&no_recurring=0&currency_code=USD\">buy me a lunch!</a>"\
                     "<br>"\
                     "Your support is my motivation!")
         msg.setWindowTitle(ver + ": Buy me a LUNCH!")

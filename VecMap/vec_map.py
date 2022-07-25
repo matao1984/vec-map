@@ -22,7 +22,7 @@ matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-matplotlib.rc('font', size=8)
+matplotlib.rc('font', size=6)
 
 ver = 'VecMap 0.2.1'
 r_date = '07/25/2022'

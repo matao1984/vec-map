@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 '''
 Change History
+07/25/2022 VecMap0.21
+Improved plotting function
 05/18/2022 VecMap0.2
 [001] and [011] radio selection
 ABF couple with HAADF function to calculate O map
@@ -20,9 +22,10 @@ matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+matplotlib.rc('font', size=8)
 
-ver = 'VecMap 0.2'
-r_date = '05/18/2022'
+ver = 'VecMap 0.2.1'
+r_date = '07/25/2022'
 
 class Ui_VecMap(QtWidgets.QMainWindow):
     def __init__(self):
@@ -41,11 +44,11 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.pushButton.setGeometry(QtCore.QRect(20, 40, 95, 41))
         self.pushButton.setObjectName("pushButton")
         self.radioButton_3 = QtWidgets.QRadioButton(VecMap)
-        self.radioButton_3.setGeometry(QtCore.QRect(130, 10, 95, 20))
+        self.radioButton_3.setGeometry(QtCore.QRect(140, 10, 95, 20))
         self.radioButton_3.setChecked(True)
         self.radioButton_3.setObjectName("radioButton_3")
         self.radioButton_4 = QtWidgets.QRadioButton(VecMap)
-        self.radioButton_4.setGeometry(QtCore.QRect(200, 10, 95, 20))
+        self.radioButton_4.setGeometry(QtCore.QRect(210, 10, 95, 20))
         self.radioButton_4.setObjectName("radioButton_4")
         self.load_group = QtWidgets.QButtonGroup(VecMap)
         self.load_group.addButton(self.radioButton_3)
@@ -59,7 +62,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.label = QtWidgets.QLabel(VecMap)
-        self.label.setGeometry(QtCore.QRect(20, 10, 100, 16))
+        self.label.setGeometry(QtCore.QRect(20, 10, 120, 16))
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(VecMap)
         self.label_2.setGeometry(QtCore.QRect(130, 55, 251, 51))
@@ -266,7 +269,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.checkBox.setText(_translate("VecMap", "ABF image"))
         self.label.setText(_translate("VecMap", "Step 1. Load image"))
         self.label_2.setText(_translate("VecMap", "<html><head/><body><p>Load a HR-STEM image with a perovskite structure. Support [001] and [011] zone axes. Filtered image is preferred.</p><p><br/></p></body></html>"))
-        self.lineEdit.setText(_translate("VecMap", "16"))
+        self.lineEdit.setText(_translate("VecMap", "8"))
         self.label_3.setText(_translate("VecMap", "Step 2. Initialize atom positions"))
         self.label_4.setText(_translate("VecMap", "Separation factor"))
         self.pushButton_2.setText(_translate("VecMap", "Initialize"))
@@ -359,8 +362,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             #s.data = norm_img(s.data)
             
             if ABF:
-                s.data = np.divide(1, s.data) #Inverse the ABF contrast to make a ADF-like image
-                #s.data = abf2haadf(s.data) #Inverse the ABF contrast to make a ADF-like image
+                #s.data = np.divide(1, s.data) #Inverse the ABF contrast to make a ADF-like image
+                s.data = abf2haadf(s.data) #Inverse the ABF contrast to make a ADF-like image
 
                 
         # Draw an image
@@ -435,7 +438,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             
             
             xy_positions = get_xy_pos_lists(A_positions)
-            dp, = f_ini.axes.plot(xy_positions[0], xy_positions[1], marker='o', ms=5, color='r', ls='')
+            dp, = f_ini.axes.plot(xy_positions[0], xy_positions[1], marker='o', ms=1, color='r', ls='')
             cid = f_ini.fig.canvas.mpl_connect('button_press_event', onclick)
         
         except NameError:
@@ -603,7 +606,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 if not img_110:
                     AB_positions = ap_A.tolist() + B_positions #Use initial B positions instead of refined to get better plane symmetry
                     sublattice_AB = Sublattice(AB_positions,image=s.data,color='y',name='Sublattice A + B')
-                    sublattice_AB.construct_zone_axes(atom_plane_tolerance=0.8)
+                    sublattice_AB.construct_zone_axes(atom_plane_tolerance=1)
                     zone_axis_002 = sublattice_AB.zones_axis_average_distances[2]#Only work for [001] currently
                     O_positions = sublattice_AB.find_missing_atoms_from_zone_vector(zone_axis_002) #Initial positions of O
                     print('='*50)
@@ -650,7 +653,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_A_site = PlotCanvas()
                     f_A_site.setWindowTitle(ver + ': Refined positions of A-site atoms in ABF')
                     f_A_site.axes.imshow(image,cmap='gray')
-                    f_A_site.axes.scatter(ap_A_abf[:,0], ap_A_abf[:,1], s=2, color='r')
+                    f_A_site.axes.scatter(ap_A_abf[:,0], ap_A_abf[:,1], s=0.5, color='r')
                     f_A_site.axes.set_axis_off()
                     f_A_site.show()
                     f_A_site.fig.savefig(my_path + title + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -659,7 +662,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_B_site = PlotCanvas()
                     f_B_site.setWindowTitle(ver + ': Refined positions of B-site atoms in ABF')
                     f_B_site.axes.imshow(image,cmap='gray')
-                    f_B_site.axes.scatter(ap_B_abf[:,0], ap_B_abf[:,1], s=2, color='b')
+                    f_B_site.axes.scatter(ap_B_abf[:,0], ap_B_abf[:,1], s=0.5, color='b')
                     f_B_site.axes.set_axis_off()
                     f_B_site.show()
                     f_B_site.fig.savefig(my_path + title + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -668,8 +671,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_AB = PlotCanvas()
                     f_AB.setWindowTitle(ver + ': A-site atoms vs. B-site atoms in ABF')
                     f_AB.axes.imshow(image,cmap='gray')
-                    f_AB.axes.scatter(ap_A_abf[:,0], ap_A_abf[:,1], s=2, color='r')
-                    f_AB.axes.scatter(ap_B_abf[:,0], ap_B_abf[:,1], s=2, color='b')
+                    f_AB.axes.scatter(ap_A_abf[:,0], ap_A_abf[:,1], s=0.5, color='r')
+                    f_AB.axes.scatter(ap_B_abf[:,0], ap_B_abf[:,1], s=0.5, color='b')
                     f_AB.axes.set_axis_off()
                     f_AB.show()
                     f_AB.fig.savefig(my_path + title + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -678,7 +681,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_A_site_adf = PlotCanvas()
                     f_A_site_adf.setWindowTitle(ver + ': Refined positions of A-site atoms in ADF')
                     f_A_site_adf.axes.imshow(image_adf,cmap='gray')
-                    f_A_site_adf.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
+                    f_A_site_adf.axes.scatter(ap_A[:,0], ap_A[:,1], s=0.5, color='r')
                     f_A_site_adf.axes.set_axis_off()
                     f_A_site_adf.show()
                     f_A_site_adf.fig.savefig(my_path + title_adf + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -687,7 +690,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_B_site_adf = PlotCanvas()
                     f_B_site_adf.setWindowTitle(ver + ': Refined positions of B-site atoms in ADF')
                     f_B_site_adf.axes.imshow(image_adf,cmap='gray')
-                    f_B_site_adf.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_B_site_adf.axes.scatter(ap_B[:,0], ap_B[:,1], s=0.5, color='b')
                     f_B_site_adf.axes.set_axis_off()
                     f_B_site_adf.show()
                     f_B_site_adf.fig.savefig(my_path + title_adf + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -696,8 +699,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_AB_adf = PlotCanvas()
                     f_AB_adf.setWindowTitle(ver + ': A-site atoms vs. B-site atoms in ADF')
                     f_AB_adf.axes.imshow(image_adf,cmap='gray')
-                    f_AB_adf.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
-                    f_AB_adf.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_AB_adf.axes.scatter(ap_A[:,0], ap_A[:,1], s=0.5, color='r')
+                    f_AB_adf.axes.scatter(ap_B[:,0], ap_B[:,1], s=0.5, color='b')
                     f_AB_adf.axes.set_axis_off()
                     f_AB_adf.show()
                     f_AB_adf.fig.savefig(my_path + title_adf + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -706,7 +709,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_A_site = PlotCanvas()
                     f_A_site.setWindowTitle(ver + ': Refined positions of A-site atoms')
                     f_A_site.axes.imshow(image,cmap='gray')
-                    f_A_site.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
+                    f_A_site.axes.scatter(ap_A[:,0], ap_A[:,1], s=0.5, color='r')
                     f_A_site.axes.set_axis_off()
                     f_A_site.show()
                     f_A_site.fig.savefig(my_path + title + '_A-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -715,7 +718,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_B_site = PlotCanvas()
                     f_B_site.setWindowTitle(ver + ': Refined positions of B-site atoms')
                     f_B_site.axes.imshow(image,cmap='gray')
-                    f_B_site.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_B_site.axes.scatter(ap_B[:,0], ap_B[:,1], s=0.5, color='b')
                     f_B_site.axes.set_axis_off()
                     f_B_site.show()
                     f_B_site.fig.savefig(my_path + title + '_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -724,8 +727,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_AB = PlotCanvas()
                     f_AB.setWindowTitle(ver + ': A-site atoms vs. B-site atoms')
                     f_AB.axes.imshow(image,cmap='gray')
-                    f_AB.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
-                    f_AB.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
+                    f_AB.axes.scatter(ap_A[:,0], ap_A[:,1], s=0.5, color='r')
+                    f_AB.axes.scatter(ap_B[:,0], ap_B[:,1], s=0.5, color='b')
                     f_AB.axes.set_axis_off()
                     f_AB.show()
                     f_AB.fig.savefig(my_path + title + '_A_and_B-site atoms' + '.tif',dpi=600,bbox_inches='tight')
@@ -735,7 +738,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_O_site = PlotCanvas()
                     f_O_site.setWindowTitle(ver + ': Refined positions of O atoms')
                     f_O_site.axes.imshow(image,cmap='gray')
-                    f_O_site.axes.scatter(ap_O[:,0], ap_O[:,1], s=2, color='g')
+                    f_O_site.axes.scatter(ap_O[:,0], ap_O[:,1], s=0.5, color='g')
                     f_O_site.axes.set_axis_off()
                     f_O_site.show()
                     f_O_site.fig.savefig(my_path + title + '_O atoms' + '.tif',dpi=600,bbox_inches='tight')                
@@ -744,9 +747,9 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                     f_all = PlotCanvas()
                     f_all.setWindowTitle(ver + ': A-site vs. B-site vs. O atoms')
                     f_all.axes.imshow(image,cmap='gray')
-                    f_all.axes.scatter(ap_A[:,0], ap_A[:,1], s=2, color='r')
-                    f_all.axes.scatter(ap_B[:,0], ap_B[:,1], s=2, color='b')
-                    f_all.axes.scatter(ap_O[:,0], ap_O[:,1], s=2, color='g')
+                    f_all.axes.scatter(ap_A[:,0], ap_A[:,1], s=0.5, color='r')
+                    f_all.axes.scatter(ap_B[:,0], ap_B[:,1], s=0.5, color='b')
+                    f_all.axes.scatter(ap_O[:,0], ap_O[:,1], s=0.5, color='g')
                     f_all.axes.set_axis_off()
                     f_all.show()
                     f_all.fig.savefig(my_path + title + '_A_B_O atoms' + '.tif',dpi=600,bbox_inches='tight')  
@@ -908,6 +911,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             
             v_x, v_y =image.shape
             img_blank = 255 * np.ones((v_x, v_y,3), dtype=np.uint8)
+            
+            lwidth = 0.4 / scale * 0.1 * 72 / 300 #Set the line width for arrows. 1 px = 72 / dpi 
 
             global f_vec_map
             f_vec_map = PlotCanvas()
@@ -928,11 +933,12 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 f_vec_map.axes.spines['left'].set_color('blue')
                 f_vec_map.axes.spines['right'].set_color('blue')
             
+            
             for vec in disp_color:
-                f_vec_map.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=1, head_width=a_len/3, head_length=a_len/3)
+                f_vec_map.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=lwidth, head_width=a_len/3, head_length=a_len/3)
 
             #Add a scale bar
-            if s_bar:            
+            if s_bar:       
                 scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
                 f_vec_map.axes.add_artist(scalebar)            
     
@@ -964,7 +970,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 
 
                 for vec in disp_color_adf:
-                    f_vec_map_adf.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=1, head_width=a_len/3, head_length=a_len/3)
+                    f_vec_map_adf.axes.arrow(vec[0],vec[1],vec[2]*a_len,vec[3]*a_len,color=vec[6], linewidth=lwidth, head_width=a_len/3, head_length=a_len/3)
 
                 #Add a scale bar
                 if s_bar:            
@@ -973,7 +979,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 
                 f_vec_map_adf.show()
                 if overlay:
-                    f_vec_map_adf.fig.savefig(my_path + title_adf + "_{}_vec_map_img_overlaid.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
+                    f_vec_map_adf.fig.savefig(my_path + title_adf + "_{}_vec_map_img_overlaid.tif".format(disp_atom),dpi=300,bbox_inches='tight')
                 else:
                     f_vec_map_adf.fig.savefig(my_path + title_adf + "_{}_vec_map.tif".format(disp_atom),dpi=1200,bbox_inches='tight')
 
@@ -1009,6 +1015,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             s_bar = False
         v_x, v_y =image.shape
         img_blank = 255 * np.ones((v_x, v_y, 3),dtype=np.uint8)
+        
+        lwidth = 0.4 / scale * 0.1 * 72 / 300 #Set the line width for arrows. 1 px = 72 / dpi 
         try:
             global f_vec_map_O
             f_vec_map_O = PlotCanvas()
@@ -1029,7 +1037,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 
 
             for vec in disp_O:
-                f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color='red',linewidth=1,head_width=O_len/3,head_length=O_len/3)
+                f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color='red',linewidth=lwidth,head_width=O_len/3,head_length=O_len/3)
             #Add a scale bar
             if s_bar:            
                 scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
@@ -1161,7 +1169,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     def donate(self):
         msg = QMessageBox()
         msg.setText("I will make this app freely available for the society.<br>"\
-                    "If you like this app, show your appreciation and <a href=\"https://www.paypal.com/donate/?business=ZCSWE88TR2YHY&no_recurring=0&currency_code=USD\">buy me a lunch!</a>"\
+                    "If you like this app, show your appreciation and <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NQTP8WZX9VDRQ&currency_code=USD&source=url\">buy me a lunch!</a>"\
                     "<br>"\
                     "Your support is my motivation!")
         msg.setWindowTitle(ver + ": Buy me a LUNCH!")
@@ -1183,8 +1191,8 @@ class PlotCanvas(QMainWindow):
         # Create the mpl Figure and FigCanvas objects. 
         # 5x4 inches, 100 dots-per-inch
         #
-        self.dpi = 100
-        self.fig = Figure((5.0, 4.0), dpi=self.dpi)
+        self.dpi = 300
+        self.fig = Figure((3, 3), dpi=self.dpi)
         self.canvas = FigureCanvas(self.fig)
         self.canvas.setParent(self.main_frame)
         

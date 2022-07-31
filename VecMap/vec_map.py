@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 '''
 Change History
-07/25/2022 VecMap0.21
+07/31/2022 VecMap0.2.2
+Improved scale bar rendering. Now it uses matplotlib built-in functions. Matplotlib-scalebar no longer needed.
+Correct the wrong unit in output csv.
+07/25/2022 VecMap0.2.1
 Improved plotting function
 05/18/2022 VecMap0.2
 [001] and [011] radio selection
 ABF couple with HAADF function to calculate O map
 Algorithm to calculate O map on [011] direction
 Bug fixes
-06/13/2020 VecMap0.11
+06/13/2020 VecMap0.1.1
 Minor bug fix
 06/10/2020 VecMap0.1
 The first versio of VecMap
@@ -22,10 +25,12 @@ matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from matplotlib import patches
+import matplotlib.patheffects as path_effects
 matplotlib.rc('font', size=6)
 
-ver = 'VecMap 0.2.1'
-r_date = '07/25/2022'
+ver = 'VecMap 0.2.2'
+r_date = '07/31/2022'
 
 class Ui_VecMap(QtWidgets.QMainWindow):
     def __init__(self):
@@ -314,7 +319,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.pushButton_14.setText(_translate("VecMap", "Oxygen\n"
 " map"))
         self.lineEdit_3.setText(_translate("VecMap", "4"))
-        self.label_13.setText(_translate("VecMap", "Scale:"))
+        self.label_13.setText(_translate("VecMap", "Width:"))
         self.checkBox_5.setText(_translate("VecMap", "Scale bar"))
         self.checkBox_6.setText(_translate("VecMap", "Overlay image"))
         self.radioButton_3.setText(_translate("VecMap", "[001]"))
@@ -356,6 +361,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             title = file_name
             scale = s.axes_manager[0].scale #Read scale data from the image
             units = s.axes_manager[0].units #Read units
+            if not isinstance(units,str):
+                units = "px"
             s.metadata.General.title = title
             s.save(my_path + title +'.hspy', overwrite=True) #Save a backup file in hspy format
             image = s.data
@@ -373,7 +380,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             f_original_img.axes.imshow(image,cmap='gray')
             f_original_img.axes.set_axis_off()
             f_original_img.axes.set_title('{} \n has been successfully loaded!'.format(title))
-            f_original_img.show()
+
 
             #Load HAADF if couple is checked
             if Couple:
@@ -381,6 +388,13 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 adf_file = openfile_adf[0]
                 s_adf = readImage(adf_file)
                 title_adf = getFileName(adf_file)
+                #check if the abf is calibrated
+                if scale == 1:#not calibrated, try haadf
+                    scale = s_adf.axes_manager[0].scale #Read scale data from the image
+                if units == 'px':#not calibrated
+                    units = s_adf.axes_manager[0].units #Read units
+                    if not isinstance(units,str):
+                        units = "px"
                 s_adf.metadata.General.title = title_adf
                 s_adf.save(my_path + title_adf + '.hspy', overwrite=True) #Save a backup file in hspy format
                 image_adf = s_adf.data
@@ -391,10 +405,17 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 f_original_adf.axes.imshow(image_adf,cmap='gray')
                 f_original_adf.axes.set_axis_off()
                 f_original_adf.axes.set_title('The coupled HAADF image has been successfully loaded!')
-                f_original_adf.show()        
+                scalebar, text, txt_x, txt_y, fontsize = scale_bar(image,scale,units)
+                f_original_adf.axes.add_artist(scalebar) 
+                sb_text(f_original_adf.axes,text,txt_x,txt_y,fontsize)
+                f_original_adf.show() 
             
             else:
                 im = s
+            scalebar, text, txt_x, txt_y, fontsize = scale_bar(image,scale,units)
+            f_original_img.axes.add_artist(scalebar) 
+            sb_text(f_original_img.axes,text,txt_x,txt_y,fontsize)
+            f_original_img.show()
 
 #==== Initialize atom position module ===============================================
 #==== Connected to self.pushButton_2 ================================================ 
@@ -814,7 +835,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 
             #Save the displacement data
             with open(my_path + title + '-{}-disp.csv'.format(disp_atom),'w') as disp_data:
-                disp_data.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg), Neighboring atoms (x y)\n')
+                disp_data.write('x (px), y (px), x disp (px), y disp (px), disp ({}), angle (deg), Neighboring atoms (x y)\n'.format(units))
                 for i in range(len(disp)):
                     disp_data.write('{}, {}, {}, {}, {}, {}, '.format(disp[i][0], disp[i][1], disp[i][2], disp[i][3], disp[i][4], disp[i][5]))
                     for pos in neighbor_pos[i]:
@@ -827,7 +848,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 ideal_pos_adf, neighbor_pos_adf = find_ideal_pos(ap_0_adf, ap_1_adf, U_avg, scale, img_110=cal_110)
                 disp_adf = find_displacement(ap_0_adf, ideal_pos_adf, U_avg, scale)
                 with open(my_path + title_adf + '-{}-disp.csv'.format(disp_atom),'w') as disp_data_adf:
-                    disp_data_adf.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg)\n')
+                    disp_data_adf.write('x (px), y (px), x disp (px), y disp (px), disp ({}), angle (deg)\n'.format(units))
                     for i in range(len(disp_adf)):
                         disp_data_adf.write('{}, {}, {}, {}, {}, {}, '.format(disp_adf[i][0], disp_adf[i][1], disp_adf[i][2], disp_adf[i][3], disp_adf[i][4], disp_adf[i][5]))
                         for pos in neighbor_pos_adf[i]:
@@ -897,6 +918,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         else:
             overlay = False
         a_len = int(self.lineEdit_2.text())
+        lwidth = int(self.lineEdit_3.text()) * 0.1
         if self.checkBox_5.isChecked():
             s_bar = True
         else:
@@ -912,7 +934,6 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             v_x, v_y =image.shape
             img_blank = 255 * np.ones((v_x, v_y,3), dtype=np.uint8)
             
-            lwidth = 0.4 / scale * 0.1 * 72 / 300 #Set the line width for arrows. 1 px = 72 / dpi 
 
             global f_vec_map
             f_vec_map = PlotCanvas()
@@ -939,8 +960,9 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 
             #Add a scale bar
             if s_bar:       
-                scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
-                f_vec_map.axes.add_artist(scalebar)            
+                scalebar, text, txt_x, txt_y, fontsize = scale_bar(image,scale,units)
+                f_vec_map.axes.add_artist(scalebar) 
+                sb_text(f_vec_map.axes,text,txt_x,txt_y,fontsize)          
     
             f_vec_map.show()
             if overlay:
@@ -974,8 +996,9 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 
                 #Add a scale bar
                 if s_bar:            
-                    scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
-                    f_vec_map_adf.axes.add_artist(scalebar)
+                    scalebar, text, txt_x, txt_y, fontsize = scale_bar(image_adf,scale,units)
+                    f_vec_map_adf.axes.add_artist(scalebar) 
+                    sb_text(f_vec_map_adf.axes,text,txt_x,txt_y,fontsize)
                 
                 f_vec_map_adf.show()
                 if overlay:
@@ -1004,7 +1027,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
 #========= Generate O vector map module =============================================
 #========= Connected to self.pushButton_14 =========================================== 
     def show_O_vec_map(self):
-        O_len = int(self.lineEdit_3.text())
+        O_len = int(self.lineEdit_2.text()) * 0.5
+        lwidth = int(self.lineEdit_3.text()) * 0.1
         if self.checkBox_6.isChecked():
             overlay = True
         else:
@@ -1016,7 +1040,6 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         v_x, v_y =image.shape
         img_blank = 255 * np.ones((v_x, v_y, 3),dtype=np.uint8)
         
-        lwidth = 0.4 / scale * 0.1 * 72 / 300 #Set the line width for arrows. 1 px = 72 / dpi 
         try:
             global f_vec_map_O
             f_vec_map_O = PlotCanvas()
@@ -1040,8 +1063,9 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color='red',linewidth=lwidth,head_width=O_len/3,head_length=O_len/3)
             #Add a scale bar
             if s_bar:            
-                scalebar = ScaleBar(scale,'nm',location='lower left',scale_loc='top',sep=2)
-                f_vec_map_O.axes.add_artist(scalebar)            
+                scalebar, text, txt_x, txt_y, fontsize = scale_bar(image,scale,units)
+                f_vec_map_O.axes.add_artist(scalebar) 
+                sb_text(f_vec_map_O.axes,text,txt_x,txt_y,fontsize)           
             
             f_vec_map_O.show()
             if overlay:
@@ -1071,6 +1095,8 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             s = readImage(my_path + title + '.hspy')
             scale = s.axes_manager[0].scale
             units = s.axes_manager[0].units
+            if not isinstance(units,str):
+                units = 'px'
             image = s.data
             disp = load_disp_data_from_csv(file)
             Couple = False #Do not support "couple" mode
@@ -1266,7 +1292,7 @@ import matplotlib.pyplot as plt
 import math
 import copy
 from scipy.spatial import distance
-from matplotlib_scalebar.scalebar import ScaleBar
+#from matplotlib_scalebar.scalebar import ScaleBar
 
 #====Helper functions, do not change====
 def readImage(file):
@@ -1440,7 +1466,7 @@ def find_displacement(A, A_com, Ua, scale):
             vec_ang = math.degrees(math.atan(dy/dx)) + 180
         else:
             vec_ang = 360 + math.degrees(math.atan(dy/dx))
-        disp.append([arrow[0], arrow[1], dx, dy, scale*1000*vec_len, vec_ang])
+        disp.append([arrow[0], arrow[1], dx, dy, scale*vec_len, vec_ang])
     return disp
 
     
@@ -1479,6 +1505,37 @@ def load_disp_data_from_csv(file):
             disp_data.append([float(data) for data in lin_data[:6]])
         return disp_data
     
+#Add a scale bar function
+def scale_bar(img,scale,unit,facecolor="white",edgecolor="black"):
+    im_x, im_y = img.shape
+    fov_x = im_x * scale
+    sb_len_float = fov_x / 6
+    sb_lst = [0.1,0.2,0.5,1,2,5,10,20,50,100,200,500,1000,2000,5000]
+    sb_len = sorted(sb_lst, key=lambda a: abs(a - sb_len_float))[0]
+    sb_len_px = sb_len / scale
+    sb_start_x, sb_start_y = (im_x / 12, im_y *11 / 12)
+    fontsize = int(im_x / 30)
+    lw = int(fontsize * 0.1)
+    if lw == 0:
+        lw = 1
+    sb = patches.Rectangle((sb_start_x,sb_start_y),sb_len_px,im_y/100*1.5,fc=facecolor,ec=edgecolor,lw=lw)
+    text = str(sb_len) + ' ' + unit
+
+    txt_x, txt_y = (sb_start_x *1.1, sb_start_y - im_y/100 * 1.5)
+    return sb, text, txt_x, txt_y, fontsize
+    
+#Add text to a scale bar
+def sb_text(ax,text,txt_x,txt_y,fontsize,facecolor="white",edgecolor="black"):
+    #ax.text(txt_x-1,txt_y-1,text,fontsize=fontsize,color=edgecolor)
+    #ax.text(txt_x+1,txt_y-1,text,fontsize=fontsize,color=edgecolor)
+    #ax.text(txt_x+1,txt_y+1,text,fontsize=fontsize,color=edgecolor)
+    #ax.text(txt_x-1,txt_y+1,text,fontsize=fontsize,color=edgecolor)
+    txt = ax.text(txt_x,txt_y,text,fontsize=fontsize,color=facecolor)
+    lw = int(fontsize * 0.1)
+    if lw == 0:
+        lw = 1
+    txt.set_path_effects([path_effects.Stroke(linewidth=lw, foreground=edgecolor),
+                       path_effects.Normal()])
 
 #====Application entry==================================
 def main():

@@ -59,14 +59,17 @@ echo on
 Replace the path and environment name if they are different in your system. Save this bat, e.g., "VecMap App.bat", on your desktop and double-click it to run the app. Note that you can name this bat file in any strings EXCEPT FOR "vecmap.bat", otherwise it will go into an infinite loop when you run it!
 
 ## 3. Change history
-### 07/25/2022 VecMap0.21
+### 07/31/2022 VecMap0.2.2
+- Improved scale bar rendering. Now it uses matplotlib built-in functions. Matplotlib-scalebar no longer needed.
+- Correct the wrong unit for displacement data in output csv.
+### 07/25/2022 VecMap0.2.1
 - Improved plotting function
 ### 05/18/2022 VecMap0.2
 - [001] and [011] radio selection
 - ABF couple with HAADF function to calculate O map
 - Algorithm to calculate O map on [011] direction
 - Bug fixes
-### 06/13/2020 VecMap0.11
+### 06/13/2020 VecMap0.1.1
 - Minor bug fix
 ### 06/10/2020 VecMap0.1
 - The first versio of VecMap

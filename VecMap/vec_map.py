@@ -872,7 +872,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 disp_O = find_displacement(ap_2, ideal_O_pos, Ua, scale)
         
                 with open(my_path + title + '-disp_O_by_{}.csv'.format(disp_atom),'w') as disp_data:
-                    disp_data.write('x (px), y (px), x disp (px), y disp (px), disp (nm), angle (deg)\n')
+                    disp_data.write('x (px), y (px), x disp (px), y disp (px), disp {}, angle (deg)\n'.format(units))
                     for data in disp_O:
                         disp_data.write('{}, {}, {}, {}, {}, {}'.format(data[0], data[1], data[2], data[3], data[4], data[5]))
                         disp_data.write('\n')

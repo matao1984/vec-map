@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 '''
 Change History
+08/22/22 VecMao0.2.3
+Improved scale bar font size rendering and small bug fixes.
+Added control for oxygen vector color.
 07/31/2022 VecMap0.2.2
 Improved scale bar rendering. Now it uses matplotlib built-in functions. Matplotlib-scalebar no longer needed.
 Correct the wrong unit in output csv.
@@ -29,8 +32,8 @@ from matplotlib import patches
 import matplotlib.patheffects as path_effects
 matplotlib.rc('font', size=6)
 
-ver = 'VecMap 0.2.2'
-r_date = '07/31/2022'
+ver = 'VecMap 0.2.3'
+r_date = '08/22/2022'
 
 class Ui_VecMap(QtWidgets.QMainWindow):
     def __init__(self):
@@ -154,9 +157,15 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.label_17 = QtWidgets.QLabel(VecMap)
         self.label_17.setGeometry(QtCore.QRect(20, 600, 181, 16))
         self.label_17.setObjectName("label_17")
+        self.label_22 = QtWidgets.QLabel(VecMap)
+        self.label_22.setGeometry(QtCore.QRect(210, 600, 61, 16))
+        self.label_22.setObjectName("label_22")
         self.lineEdit_5 = QtWidgets.QLineEdit(VecMap)
-        self.lineEdit_5.setGeometry(QtCore.QRect(20, 620, 251, 22))
+        self.lineEdit_5.setGeometry(QtCore.QRect(20, 620, 181, 22))
         self.lineEdit_5.setObjectName("lineEdit_5")
+        self.lineEdit_6 = QtWidgets.QLineEdit(VecMap)
+        self.lineEdit_6.setGeometry(QtCore.QRect(210, 620, 61, 22))
+        self.lineEdit_6.setObjectName("lineEdit_6")
         self.pushButton_5 = QtWidgets.QPushButton(VecMap)
         self.pushButton_5.setGeometry(QtCore.QRect(280, 550, 101, 91))
         self.pushButton_5.setObjectName("pushButton_5")
@@ -294,8 +303,10 @@ class Ui_VecMap(QtWidgets.QMainWindow):
         self.lineEdit_4.setText(_translate("VecMap", "45"))
         self.label_15.setText(_translate("VecMap", "e.g., 45 135 225 315"))
         self.label_16.setText(_translate("VecMap", "List of colors (should match the angles):"))
-        self.label_17.setText(_translate("VecMap", "e.g., yellow blue red green"))
+        self.label_17.setText(_translate("VecMap", "Cation, e.g., yellow blue red green"))
+        self.label_22.setText(_translate("VecMap", "O color"))
         self.lineEdit_5.setText(_translate("VecMap", "yellow"))
+        self.lineEdit_6.setText(_translate("VecMap", "red"))
         self.pushButton_5.setText(_translate("VecMap", "Vector angle\n"
 "distrubution"))
         self.pushButton_6.setText(_translate("VecMap", "Cation \n"
@@ -872,7 +883,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 disp_O = find_displacement(ap_2, ideal_O_pos, Ua, scale)
         
                 with open(my_path + title + '-disp_O_by_{}.csv'.format(disp_atom),'w') as disp_data:
-                    disp_data.write('x (px), y (px), x disp (px), y disp (px), disp {}, angle (deg)\n'.format(units))
+                    disp_data.write('x (px), y (px), x disp (px), y disp (px), disp ({}), angle (deg)\n'.format(units))
                     for data in disp_O:
                         disp_data.write('{}, {}, {}, {}, {}, {}'.format(data[0], data[1], data[2], data[3], data[4], data[5]))
                         disp_data.write('\n')
@@ -1029,6 +1040,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
     def show_O_vec_map(self):
         O_len = int(self.lineEdit_2.text()) * 0.5
         lwidth = int(self.lineEdit_3.text()) * 0.1
+        O_color = self.lineEdit_6.text()
         if self.checkBox_6.isChecked():
             overlay = True
         else:
@@ -1060,7 +1072,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
                 
 
             for vec in disp_O:
-                f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color='red',linewidth=lwidth,head_width=O_len/3,head_length=O_len/3)
+                f_vec_map_O.axes.arrow(vec[0],vec[1],vec[2]*O_len,vec[3]*O_len,color=O_color,linewidth=lwidth,head_width=O_len/3,head_length=O_len/3)
             #Add a scale bar
             if s_bar:            
                 scalebar, text, txt_x, txt_y, fontsize = scale_bar(image,scale,units)
@@ -1514,26 +1526,19 @@ def scale_bar(img,scale,unit,facecolor="white",edgecolor="black"):
     sb_len = sorted(sb_lst, key=lambda a: abs(a - sb_len_float))[0]
     sb_len_px = sb_len / scale
     sb_start_x, sb_start_y = (im_x / 12, im_y *11 / 12)
-    fontsize = int(im_x / 30)
-    lw = int(fontsize * 0.1)
-    if lw == 0:
-        lw = 1
+    #fontsize = int(im_y / 25)
+    fontsize = sb_len_px / (1.5*300) * 72
+    lw = im_y/100*1.5*0.1
     sb = patches.Rectangle((sb_start_x,sb_start_y),sb_len_px,im_y/100*1.5,fc=facecolor,ec=edgecolor,lw=lw)
     text = str(sb_len) + ' ' + unit
 
-    txt_x, txt_y = (sb_start_x *1.1, sb_start_y - im_y/100 * 1.5)
+    txt_x, txt_y = (sb_start_x + sb_len * 0.1, sb_start_y - im_y/100 * 1.5)
     return sb, text, txt_x, txt_y, fontsize
     
 #Add text to a scale bar
 def sb_text(ax,text,txt_x,txt_y,fontsize,facecolor="white",edgecolor="black"):
-    #ax.text(txt_x-1,txt_y-1,text,fontsize=fontsize,color=edgecolor)
-    #ax.text(txt_x+1,txt_y-1,text,fontsize=fontsize,color=edgecolor)
-    #ax.text(txt_x+1,txt_y+1,text,fontsize=fontsize,color=edgecolor)
-    #ax.text(txt_x-1,txt_y+1,text,fontsize=fontsize,color=edgecolor)
     txt = ax.text(txt_x,txt_y,text,fontsize=fontsize,color=facecolor)
-    lw = int(fontsize * 0.1)
-    if lw == 0:
-        lw = 1
+    lw = fontsize * 0.1
     txt.set_path_effects([path_effects.Stroke(linewidth=lw, foreground=edgecolor),
                        path_effects.Normal()])
 

@@ -59,6 +59,9 @@ echo on
 Replace the path and environment name if they are different in your system. Save this bat, e.g., "VecMap App.bat", on your desktop and double-click it to run the app. Note that you can name this bat file in any strings EXCEPT FOR "vecmap.bat", otherwise it will go into an infinite loop when you run it!
 
 ## 3. Change history
+### 08/22/22 VecMao0.2.3
+- Improved scale bar font size rendering and small bug fixes.
+- Added control for oxygen vector color.
 ### 07/31/2022 VecMap0.2.2
 - Improved scale bar rendering. Now it uses matplotlib built-in functions. Matplotlib-scalebar no longer needed.
 - Correct the wrong unit for displacement data in output csv.

@@ -908,6 +908,7 @@ class Ui_VecMap(QtWidgets.QMainWindow):
             f_vec_ang_dist.setWindowTitle('Histogram of Displacement Directions')
             f_vec_ang_dist.axes.hist(disp_angles, bins=50, range=(0,360))
             f_vec_ang_dist.axes.set_xlabel('Displacement angles (Degrees)')
+            f_vec_ang_dist.axes.set_xlim(0,360)
             f_vec_ang_dist.axes.set_xticks(list(range(0,390,30)))
             f_vec_ang_dist.axes.set_ylabel('Frequency')
             f_vec_ang_dist.axes.set_title('Put your cursor on the peak(s) to see the\n displacement directions')

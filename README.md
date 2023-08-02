@@ -65,7 +65,7 @@ Tao Ma, VecMap: A Python-based Graphic User Interface Tool for Atomic Displaceme
 
 The measured was originally designed and used in the following papers:
 
-Tao Ma, Zhongming Fan, Bin Xu, Tae-Hoon Kim, Ping Lu, Laurent Bellaiche, Matthew J. Kramer, Xiaoli Tan, and Lin Zhou
+Tao Ma, Zhongming Fan, Bin Xu, Tae-Hoon Kim, Ping Lu, Laurent Bellaiche, Matthew J. Kramer, Xiaoli Tan, and Lin Zhou; Uncompensated Polarization in Incommensurate Modulations of Perovskite Antiferroelectrics. 
 Phys. Rev. Lett. 2019, 123, 217602. https://doi.org/10.1103/PhysRevLett.123.217602
 
 Tao Ma, Zhongming Fan, Xiaoli Tan, Lin Zhou; Atomically resolved domain boundary structure in lead zirconate-based antiferroelectrics. Appl. Phys. Lett. 2019, 16, 115 (12): 122902. https://doi.org/10.1063/1.5115039

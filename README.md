@@ -60,13 +60,16 @@ Replace the path and environment name if they are different in your system. Save
 
 ## 3. Citations and acknowledgement
 VecMap was described in this paper:
+
 Tao Ma, VecMap: A Python-based Graphic User Interface Tool for Atomic Displacement Mapping in Perovskite Structures, Microscopy and Microanalysis, Volume 29, Issue 2, April 2023, Pages 520–528, https://doi.org/10.1093/micmic/ozac038
 
 The measured was originally designed and used in the following papers:
+
 Tao Ma, Zhongming Fan, Bin Xu, Tae-Hoon Kim, Ping Lu, Laurent Bellaiche, Matthew J. Kramer, Xiaoli Tan, and Lin Zhou
 Phys. Rev. Lett. 2019, 123, 217602. https://doi.org/10.1103/PhysRevLett.123.217602
+
 Tao Ma, Zhongming Fan, Xiaoli Tan, Lin Zhou; Atomically resolved domain boundary structure in lead zirconate-based antiferroelectrics. Appl. Phys. Lett. 2019, 16, 115 (12): 122902. https://doi.org/10.1063/1.5115039
-## 3. Change history
+## 4. Change history
 ### 08/22/22 VecMao0.2.3
 - Improved scale bar font size rendering and small bug fixes.
 - Added control for oxygen vector color.
